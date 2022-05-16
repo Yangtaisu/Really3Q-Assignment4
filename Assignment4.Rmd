@@ -1,0 +1,80 @@
+---
+title: 'Title'
+author: ""
+bibliography: references.bib
+biblio-style: authoryear-comp
+linestretch: 1.5
+output:
+  prettydoc::html_pretty:
+    theme: HPSTR
+    highlight: github
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 8
+    includes:
+    keep_tex: yes
+    number_sections: yes
+    citation_package: biblatex
+    toc: false
+---
+
+```{r}
+library(readr)
+library(tidyverse)
+library(knitr)
+annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv")
+```
+
+```{r}
+df_CI <-  annual_number_of_deaths_by_cause %>%
+  mutate (
+    `Number of executions (Amnesty International)` = as.numeric(`Number of executions (Amnesty International)`)
+  ) %>%
+  pivot_longer(
+    cols =  -c(Entity, Code, Year),
+    names_to = "Death_cause",
+    values_to = "Count"
+  ) %>%
+  filter(Entity %in% c("China", "India"),
+         Year %in% c(1950:2018))
+
+#x <- df_CI$Death_cause
+#Death_causes <- gsub("[[:blank:]]+", "_", x)
+#Death_causes <- as.data.frame(Death_causes)
+#df_CI <- bind_cols(df_CI, Death_causes) %>% 
+#  select(-Death_cause)
+#rm(Death_causes, x)
+
+CI <- df_CI%>% 
+  group_by(Entity,
+           Year) %>% 
+  mutate(Total_death = sum(Count, na.rm = TRUE)*100
+         ) %>% 
+  group_by(Entity,
+           Year,
+           Death_cause) %>% 
+  summarize(Percentage = Count/Total_death*100) %>% 
+  group_by(Entity,
+           Death_cause) %>% 
+  arrange(desc(Percentage)) %>% 
+  filter(Year > 1950,
+         Death_cause %in% c("Deaths - Cardiovascular diseases - Sex: Both - Age: All Ages (Number)",
+                            "Deaths - Diabetes mellitus - Sex: Both - Age: All Ages (Number)",
+                            "Deaths - HIV/AIDS - Sex: Both - Age: All Ages (Number)",
+                            "Deaths - Neoplasms - Sex: Both - Age: All Ages (Number)",
+                            "Deaths - Nutritional deficiencies - Sex: Both - Age: All Ages (Number)",
+                            "Deaths - Malaria - Sex: Both - Age: All Ages (Number)" ))
+```
+```{r}
+CI %>% 
+  ggplot(aes(x = Year,
+             y = Percentage,
+             color = Death_cause))+
+  geom_line() +
+  facet_wrap(~Entity, nrow = 2, scales = "free_y")
+```
+
+```{r}
+
+```
+
