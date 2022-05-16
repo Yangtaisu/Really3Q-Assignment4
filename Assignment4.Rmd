@@ -1,0 +1,19 @@
+---
+title: 'Title'
+author: ""
+bibliography: references.bib
+biblio-style: authoryear-comp
+linestretch: 1.5
+output:
+  prettydoc::html_pretty:
+    theme: HPSTR
+    highlight: github
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 8
+    includes:
+    keep_tex: yes
+    number_sections: yes
+    citation_package: biblatex
+    toc: false
+---
