@@ -1,0 +1,160 @@
+---
+title: 'Title'
+author: ""
+bibliography: references.bib
+biblio-style: authoryear-comp
+linestretch: 1.5
+output:
+  prettydoc::html_pretty:
+    theme: HPSTR
+    highlight: github
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 8
+    includes:
+    keep_tex: yes
+    number_sections: yes
+    citation_package: biblatex
+    toc: false
+---
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+```
+
+## Introduction
+
+## Main body
+
+### Australia and New zealand
+
+```{r}
+Final_data <- read_delim("Data/Final_data.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv")
+```
+
+```{r}
+AZ_data <- annual_number_of_deaths_by_cause %>% filter(
+  Entity %in% c("Australia","New Zealand"),
+  Year >= 2014,
+  Year <= 2018) %>% 
+mutate(Deathamount= rowSums(AZ_data[5:36],na.rm = TRUE))  %>% 
+
+mutate (`Number of executions (Amnesty International)`= as.numeric(`Number of executions (Amnesty International)`)) %>%
+  pivot_longer(cols =  -c(Entity, Code, Year), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>% 
+  group_by(Entity,
+           Year) %>% 
+  arrange(desc(Count)) %>% 
+  head(500)
+
+prop.table()
+
+as.matrix(AZ_data[5:36]) %>%
+prop.table(1) -> marginal_table
+
+annual_number_of_deaths_by_cause[1:3] %>%
+  merge(as.tibble(marginal_table))
+```
+
+
+
+
+
+```{r}
+AZ_data <- annual_number_of_deaths_by_cause %>%
+  filter(
+    Entity %in% 
+      c("Australia","New Zealand"))%>%
+  mutate (`Number of executions (Amnesty International)`= 
+            as.numeric(`Number of executions (Amnesty International)`)) %>%
+  pivot_longer(cols =  -c(Entity, Code, Year), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>% 
+  filter(Entity %in% c("Australia","New Zealand"),
+         Year %in% c(1990:2018)) %>% 
+    group_by(Entity,
+           Year) %>% 
+  arrange(desc(Count)) %>% 
+  head(500)
+
+
+
+
+
+df_CI <-  annual_number_of_deaths_by_cause %>%
+  mutate (
+    `Number of executions (Amnesty International)` = as.numeric(`Number of executions (Amnesty International)`)
+  ) %>%
+  pivot_longer(
+    cols =  -c(Entity, Code, Year),
+    names_to = "Death_cause",
+    values_to = "Count"
+  ) %>%
+  filter(Entity %in% c("Australia", "New Zealand"),
+         Year %in% c(1990:2018))
+
+
+data_18 <- df_CI%>% 
+  group_by(Entity,
+           Year) %>% 
+  mutate(Total_death = sum(Count, na.rm = TRUE)*100) %>% 
+  group_by(Entity,
+           Year,
+           Death_cause) %>% 
+  summarize(Percentage = Count/Total_death*100) %>% 
+  group_by(Entity,
+           Year) %>% 
+  arrange(desc(Percentage)) %>% 
+  head(500)
+
+ggplot(AZ_data,
+       mapping = aes(x=Year,
+                     y=Count,
+                     color=Death_cause))+
+  geom_line()+
+    facet_wrap(~Entity,
+             scales = "free_y")
+
+  ggplot(mapping = aes(x=year,
+                     y=rating,
+                     color=type))+
+  geom_line()
+        
+```
+
+```{r}
+df_CI <-  annual_number_of_deaths_by_cause %>%
+  mutate (`Number of executions (Amnesty International)`= as.numeric(`Number of executions (Amnesty International)`)) %>%
+  pivot_longer(cols =  -c(Entity, Code, Year), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>% 
+  filter(Entity %in% c("China", "India"),
+         Year %in% c(2000:2018))
+
+
+data_18 <- df_CI%>% 
+  group_by(Entity,
+           Year) %>% 
+  mutate(Total_death = sum(Count, na.rm = TRUE)*100) %>% 
+  group_by(Entity,
+           Year,
+           Death_cause) %>% 
+  summarize(Percentage = Count/Total_death*100) %>% 
+  group_by(Entity) %>% 
+  arrange(desc(Percentage)) %>% 
+  filter(Year == 2018,
+         Percentage > 0.1)
+
+
+```
+
+
+
+
+
+
+## Colusion
