@@ -6,7 +6,7 @@ biblio-style: authoryear-comp
 linestretch: 1.5
 output:
   prettydoc::html_pretty:
-    theme: HPSTR
+    theme: cayman
     highlight: github
     fig_caption: yes
     fig_height: 5
@@ -35,8 +35,16 @@ annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-ca
     col_types = cols(`Number of executions` = col_double()))
 ```
 
+1.List all kinds of death causes
+```{r deathcauses}
+list <- annual_number_of_deaths_by_cause %>% select(-(1:3))
+names(list) %>% kable(caption="Death Causes")
+```
 
-```{r}
+For this table\@ref(tab:deathcauses),
+
+2.World data
+```{r worldtable}
 world_data <-annual_number_of_deaths_by_cause %>% 
   filter(!is.na(Code),
          Year %in% c(1990:2018)) %>%
@@ -51,20 +59,21 @@ world_data %>%
   arrange(desc(Death_amount)) %>% 
   head() %>% 
   kable(caption = "The world' top six causes of death in 2018")
+```
 
+```{r worldplot,fig.cap ="Number of deaths by cause, World, 1990 to 2019"}
 ggplot(world_data,
        mapping = aes(x=Year,
                      y=Death_amount,
                      color=Death_cause))+
   geom_line()
-
 ```
+\@ref(fig:worldplot)
 
+3.Australia and New Zealand data
 
-
-
-1.Select death due to disease factors
-```{r}
+(1).Select death due to disease factors
+```{r diseaseplot,fig.cap="Number of deaths by disease causes, 1990 to 2018"}
 disease_data <- annual_number_of_deaths_by_cause %>% 
   select(1,3,5,6,7,8,9,12,13,14,15,16,17,18,22,24,26,27,32,33,34,36) %>% 
   filter(Country %in% c("Australia","New Zealand"),
@@ -82,8 +91,8 @@ ggplot(disease_data,
              scales = "free_y")
 ```
 
-2.select death due to other factors
-```{r}
+(2).select death due to other factors
+```{r otherplot,fig.cap="Number of deaths by other causes, 1990 to 2018"}
 disease_data <- annual_number_of_deaths_by_cause %>% 
   select(1,3,4,10,11,19,20,21,23,25,28,29,30,31,35) %>% 
   filter(Country %in% c("Australia","New Zealand"),
@@ -101,96 +110,9 @@ ggplot(disease_data,
 ```
 
 
-```{r}
-
-names(annual_number_of_deaths_by_cause) %>% kable(caption="Death causes")
 
 
-
-
-
-
-
-
-AZ_data <- annual_number_of_deaths_by_cause %>%
-  filter(
-    Country %in% 
-      c("Australia","New Zealand"))%>%
-  mutate (`Amnesty International`= 
-            as.numeric(`Amnesty International`)) %>%
-  pivot_longer(cols =  -c(Country, Code, Year), 
-               names_to = "Death_cause", 
-               values_to = "Count") %>% 
-  filter(Country %in% c("Australia","New Zealand"),
-         Year %in% c(1990:2018)) %>% 
-    group_by(Country,
-           Year) %>% 
-  arrange(desc(Count)) %>% 
-  head(500)
-
-
-
-df_CI <-  annual_number_of_deaths_by_cause %>%
-  mutate (`Amnesty International`= 
-            as.numeric(`Amnesty International`)) %>% 
-  pivot_longer(
-    cols =  -c(1:3),
-    names_to = "Death_cause",
-    values_to = "Count"
-  ) %>%
-  filter(Country %in% c("Australia", "New Zealand"),
-         Year %in% c(1990:2018))
-
-
-data_18 <- df_CI%>% 
-  group_by(Country,
-           Year) %>% 
-  mutate(Total_death = sum(Count, na.rm = TRUE)*100) %>% 
-  group_by(Country,
-           Year,
-           Death_cause) %>% 
-  summarize(Percentage = Count/Total_death*100) %>% 
-  group_by(Country,
-           Year) %>% 
-  arrange(desc(Percentage)) %>% 
-  head(500)
-
-ggplot(AZ_data,
-       mapping = aes(x=Year,
-                     y=Count,
-                     color=Death_cause))+
-  geom_line()+
-    facet_wrap(~Country,
-             scales = "free_y")
-
-        
-```
-
-```{r}
-df_CI <-  annual_number_of_deaths_by_cause %>%
-  mutate (`Number of executions (Amnesty International)`= as.numeric(`Number of executions (Amnesty International)`)) %>%
-  pivot_longer(cols =  -c(Entity, Code, Year), 
-               names_to = "Death_cause", 
-               values_to = "Count") %>% 
-  filter(Entity %in% c("China", "India"),
-         Year %in% c(2000:2018))
-
-
-data_18 <- df_CI%>% 
-  group_by(Entity,
-           Year) %>% 
-  mutate(Total_death = sum(Count, na.rm = TRUE)*100) %>% 
-  group_by(Entity,
-           Year,
-           Death_cause) %>% 
-  summarize(Percentage = Count/Total_death*100) %>% 
-  group_by(Entity) %>% 
-  arrange(desc(Percentage)) %>% 
-  filter(Year == 2018,
-         Percentage > 0.1)
-
-
-```
+@ggplot, @tidyverse,@readr
 
 
 
