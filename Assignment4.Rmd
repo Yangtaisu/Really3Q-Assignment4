@@ -75,6 +75,17 @@ CI %>%
 ```
 
 ```{r}
+df <-  annual_number_of_deaths_by_cause %>%
+  mutate (
+    `Number of executions (Amnesty International)` = as.numeric(`Number of executions (Amnesty International)`)
+  ) %>%
+  pivot_longer(
+    cols =  -c(Entity, Code, Year),
+    names_to = "Death_cause",
+    values_to = "Count"
+  ) 
 
+df %>% group_by(Year) %>% 
+  mutate(Total_Death = sum(Count, na.rm = TRUE))
 ```
 
