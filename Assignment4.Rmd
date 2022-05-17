@@ -21,6 +21,7 @@ output:
 library(tidyverse)
 library(ggplot2)
 library(readr)
+library(knitr)
 ```
 
 ## Introduction
@@ -29,84 +30,108 @@ library(readr)
 
 ### Australia and New zealand
 
-```{r}
-Final_data <- read_delim("Data/Final_data.csv", 
-    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+```{r read_data, results='hide'}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv")
 ```
 
+
 ```{r}
-AZ_data <- annual_number_of_deaths_by_cause %>% filter(
-  Entity %in% c("Australia","New Zealand"),
-  Year >= 2014,
-  Year <= 2018) %>% 
-mutate(Deathamount= rowSums(AZ_data[5:36],na.rm = TRUE))  %>% 
-
-mutate (`Number of executions (Amnesty International)`= as.numeric(`Number of executions (Amnesty International)`)) %>%
-  pivot_longer(cols =  -c(Entity, Code, Year), 
-               names_to = "Death_cause", 
-               values_to = "Count") %>% 
-  group_by(Entity,
-           Year) %>% 
-  arrange(desc(Count)) %>% 
-  head(500)
-
-prop.table()
-
-as.matrix(AZ_data[5:36]) %>%
-prop.table(1) -> marginal_table
-
-annual_number_of_deaths_by_cause[1:3] %>%
-  merge(as.tibble(marginal_table))
+world_data <-annual_number_of_deaths_by_cause %>% 
+  group_by(Country,Year) %>% 
+  summarise()
 ```
 
 
 
 
+1.Select death due to disease factors
+```{r}
+disease_data <- annual_number_of_deaths_by_cause %>% 
+  select(1,3,5,6,7,8,9,12,13,14,15,16,17,18,22,24,26,27,32,33,34,36) %>% 
+  filter(Country %in% c("Australia","New Zealand"),
+         Year %in% c(1990:2018)) %>% 
+  pivot_longer(cols =  -c(1:3), 
+               names_to = "Death_cause", 
+               values_to = "Count")
+
+ggplot(disease_data,
+       mapping = aes(x=Year,
+                     y=Count,
+                     color=Death_cause))+
+  geom_line()+
+    facet_wrap(~Country,
+             scales = "free_y")
+```
+
+2.select death due to other factors
+```{r}
+disease_data <- annual_number_of_deaths_by_cause %>% 
+  select(1,3,4,10,11,19,20,21,23,25,28,29,30,31,35) %>% 
+  filter(Country %in% c("Australia","New Zealand"),
+         Year %in% c(1990:2018)) %>% 
+  pivot_longer(cols =  -c(1:3), 
+               names_to = "Death_cause", 
+               values_to = "Count")
+ggplot(disease_data,
+       mapping = aes(x=Year,
+                     y=Count,
+                     color=Death_cause))+
+  geom_line()+
+    facet_wrap(~Country,
+             scales = "free_y")
+```
+
 
 ```{r}
+
+names(annual_number_of_deaths_by_cause) %>% kable(caption="Death causes")
+
+
+
+
+
+
+
+
 AZ_data <- annual_number_of_deaths_by_cause %>%
   filter(
-    Entity %in% 
+    Country %in% 
       c("Australia","New Zealand"))%>%
-  mutate (`Number of executions (Amnesty International)`= 
-            as.numeric(`Number of executions (Amnesty International)`)) %>%
-  pivot_longer(cols =  -c(Entity, Code, Year), 
+  mutate (`Amnesty International`= 
+            as.numeric(`Amnesty International`)) %>%
+  pivot_longer(cols =  -c(Country, Code, Year), 
                names_to = "Death_cause", 
                values_to = "Count") %>% 
-  filter(Entity %in% c("Australia","New Zealand"),
+  filter(Country %in% c("Australia","New Zealand"),
          Year %in% c(1990:2018)) %>% 
-    group_by(Entity,
+    group_by(Country,
            Year) %>% 
   arrange(desc(Count)) %>% 
   head(500)
-
-
 
 
 
 df_CI <-  annual_number_of_deaths_by_cause %>%
-  mutate (
-    `Number of executions (Amnesty International)` = as.numeric(`Number of executions (Amnesty International)`)
-  ) %>%
+  mutate (`Amnesty International`= 
+            as.numeric(`Amnesty International`)) %>% 
   pivot_longer(
-    cols =  -c(Entity, Code, Year),
+    cols =  -c(1:3),
     names_to = "Death_cause",
     values_to = "Count"
   ) %>%
-  filter(Entity %in% c("Australia", "New Zealand"),
+  filter(Country %in% c("Australia", "New Zealand"),
          Year %in% c(1990:2018))
 
 
 data_18 <- df_CI%>% 
-  group_by(Entity,
+  group_by(Country,
            Year) %>% 
   mutate(Total_death = sum(Count, na.rm = TRUE)*100) %>% 
-  group_by(Entity,
+  group_by(Country,
            Year,
            Death_cause) %>% 
   summarize(Percentage = Count/Total_death*100) %>% 
-  group_by(Entity,
+  group_by(Country,
            Year) %>% 
   arrange(desc(Percentage)) %>% 
   head(500)
@@ -116,13 +141,9 @@ ggplot(AZ_data,
                      y=Count,
                      color=Death_cause))+
   geom_line()+
-    facet_wrap(~Entity,
+    facet_wrap(~Country,
              scales = "free_y")
 
-  ggplot(mapping = aes(x=year,
-                     y=rating,
-                     color=type))+
-  geom_line()
         
 ```
 
