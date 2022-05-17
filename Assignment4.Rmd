@@ -31,14 +31,33 @@ library(knitr)
 ### Australia and New zealand
 
 ```{r read_data, results='hide'}
-annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv")
+annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
+    col_types = cols(`Number of executions` = col_double()))
 ```
 
 
 ```{r}
 world_data <-annual_number_of_deaths_by_cause %>% 
-  group_by(Country,Year) %>% 
-  summarise()
+  filter(!is.na(Code),
+         Year %in% c(1990:2018)) %>%
+  pivot_longer(cols =  -c(1:3), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>% 
+  group_by(Year,Death_cause) %>% 
+  summarise(Death_amount=sum(Count, na.rm = TRUE))
+
+world_data %>% 
+  filter(Year==2018) %>% 
+  arrange(desc(Death_amount)) %>% 
+  head() %>% 
+  kable(caption = "The world' top six causes of death in 2018")
+
+ggplot(world_data,
+       mapping = aes(x=Year,
+                     y=Death_amount,
+                     color=Death_cause))+
+  geom_line()
+
 ```
 
 
