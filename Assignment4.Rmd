@@ -1,6 +1,6 @@
 ---
 title: 'Title'
-author: ""
+author: "ShiJingyi"
 bibliography: references.bib
 biblio-style: authoryear-comp
 linestretch: 1.5
@@ -13,7 +13,6 @@ output:
     fig_width: 8
     includes:
     keep_tex: yes
-    number_sections: yes
     citation_package: biblatex
     toc: false
 ---
@@ -33,6 +32,8 @@ library(knitr)
 ```{r read_data, results='hide'}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
     col_types = cols(`Number of executions` = col_double()))
+life_expectancy <- read_csv("Data/life-expectancy.csv")
+share_with_depression <- read_csv("Data/share-with-depression.csv")
 ```
 
 1.List all kinds of death causes
@@ -76,35 +77,81 @@ ggplot(world_data,
 ```{r diseaseplot,fig.cap="Number of deaths by disease causes, 1990 to 2018"}
 disease_data <- annual_number_of_deaths_by_cause %>% 
   select(1,3,5,6,7,8,9,12,13,14,15,16,17,18,22,24,26,27,32,33,34,36) %>% 
-  filter(Country %in% c("Australia","New Zealand"),
+  filter(Country %in% c("Australia","Switzerland"),
          Year %in% c(1990:2018)) %>% 
   pivot_longer(cols =  -c(1:3), 
                names_to = "Death_cause", 
                values_to = "Count")
 
-ggplot(disease_data,
+AZ_life_expectancy <- life_expectancy %>% filter(
+  Entity %in% c("Australia","Switzerland"),
+  Year %in% c(1990:2018)
+) %>% 
+  rename("Country" = "Entity",
+         "Life_expectancy" = "Life expectancy") %>% 
+  select(-Code)
+
+DL_data <- disease_data %>% 
+  left_join(AZ_life_expectancy,by=c("Country","Year"))
+
+ggplot(DL_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
   geom_line()+
+  geom_line(aes(y=Life_expectancy*500),
+            color="#E69F00",
+            size=1)+
+  geom_point(aes(y=Life_expectancy*500),
+             color="green",
+             size=1)+
+    scale_y_continuous(name = "Number of deaths by disease causes",
+    sec.axis = sec_axis(trans =~./500,
+                        name = "Life expectancy"))+
     facet_wrap(~Country,
              scales = "free_y")
 ```
 
 (2).select death due to other factors
 ```{r otherplot,fig.cap="Number of deaths by other causes, 1990 to 2018"}
-disease_data <- annual_number_of_deaths_by_cause %>% 
+other_data <- annual_number_of_deaths_by_cause %>% 
   select(1,3,4,10,11,19,20,21,23,25,28,29,30,31,35) %>% 
-  filter(Country %in% c("Australia","New Zealand"),
+  filter(Country %in% c("Australia","Switzerland"),
          Year %in% c(1990:2018)) %>% 
   pivot_longer(cols =  -c(1:3), 
                names_to = "Death_cause", 
                values_to = "Count")
-ggplot(disease_data,
+
+
+AZ_share_with_depression <-share_with_depression  %>% filter(
+  Entity %in% c("Australia","Switzerland"),
+  Year %in% c(1990:2018)
+) %>% 
+  rename("Country" = "Entity",
+         "Depressive_disorders" = "Depressive disorders") %>% 
+  select(-Code)
+
+DD_data <- other_data %>% 
+  left_join(AZ_share_with_depression,by=c("Country","Year"))
+
+
+
+
+ggplot(DD_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
-  geom_line()+
+  geom_line()+  
+  geom_line(aes(y=Depressive_disorders*300),
+            color="#E69F00",
+            size=1)+
+  geom_point(aes(y=Depressive_disorders*300),
+             color="blue",
+             size=1)+
+    scale_y_continuous(name = "Number of deaths by other causes",
+    sec.axis = sec_axis(trans =~./300,
+                        name = "Depressive disorders %"))+
+  
     facet_wrap(~Country,
              scales = "free_y")
 ```
