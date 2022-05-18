@@ -21,6 +21,7 @@ library(tidyverse)
 library(ggplot2)
 library(readr)
 library(knitr)
+library(plotly)
 ```
 
 ## Introduction
@@ -38,14 +39,6 @@ share_with_depression <- read_csv("Data/share-with-depression.csv")
 
 1.List all kinds of death causes
 ```{r deathcauses}
-list <- annual_number_of_deaths_by_cause %>% select(-(1:3))
-names(list) %>% kable(caption="Death Causes")
-```
-
-For this table\@ref(tab:deathcauses),
-
-2.World data
-```{r worldtable}
 world_data <-annual_number_of_deaths_by_cause %>% 
   filter(!is.na(Code),
          Year %in% c(1990:2018)) %>%
@@ -55,6 +48,16 @@ world_data <-annual_number_of_deaths_by_cause %>%
   group_by(Year,Death_cause) %>% 
   summarise(Death_amount=sum(Count, na.rm = TRUE))
 
+world_data %>% filter(Year==1990) %>% 
+  pull(Death_cause) %>% 
+  kable(caption = "The caueses of death")
+
+```
+
+For this table\@ref(tab:deathcauses),
+
+2.World data
+```{r worldtable}
 world_data %>% 
   filter(Year==2018) %>% 
   arrange(desc(Death_amount)) %>% 
@@ -63,11 +66,14 @@ world_data %>%
 ```
 
 ```{r worldplot,fig.cap ="Number of deaths by cause, World, 1990 to 2019"}
-ggplot(world_data,
+p1 <- ggplot(world_data,
        mapping = aes(x=Year,
                      y=Death_amount,
                      color=Death_cause))+
-  geom_line()
+  geom_line()+
+  theme_bw()
+
+  ggplotly(p1)
 ```
 \@ref(fig:worldplot)
 
@@ -94,22 +100,24 @@ AZ_life_expectancy <- life_expectancy %>% filter(
 DL_data <- disease_data %>% 
   left_join(AZ_life_expectancy,by=c("Country","Year"))
 
-ggplot(DL_data,
+p2 <-ggplot(DL_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
   geom_line()+
   geom_line(aes(y=Life_expectancy*500),
-            color="#E69F00",
+            color="#1CDC4B",
             size=1)+
   geom_point(aes(y=Life_expectancy*500),
-             color="green",
+             color="#12F09E",
              size=1)+
     scale_y_continuous(name = "Number of deaths by disease causes",
     sec.axis = sec_axis(trans =~./500,
                         name = "Life expectancy"))+
     facet_wrap(~Country,
-             scales = "free_y")
+             scales = "free_y")+
+  theme_bw()
+  ggplotly(p2)
 ```
 
 (2).select death due to other factors
@@ -137,16 +145,16 @@ DD_data <- other_data %>%
 
 
 
-ggplot(DD_data,
+p3 <- ggplot(DD_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
   geom_line()+  
   geom_line(aes(y=Depressive_disorders*300),
-            color="#E69F00",
+            color="#2399F5",
             size=1)+
   geom_point(aes(y=Depressive_disorders*300),
-             color="blue",
+             color="#99C3E5",
              size=1)+
     scale_y_continuous(name = "Number of deaths by other causes",
     sec.axis = sec_axis(trans =~./300,
@@ -154,6 +162,7 @@ ggplot(DD_data,
   
     facet_wrap(~Country,
              scales = "free_y")
+  ggplotly(p3)
 ```
 
 
