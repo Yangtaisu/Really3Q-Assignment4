@@ -42,3 +42,63 @@ output:
     citation_package: biblatex
     toc: false
 ---
+
+### Benin and Mozambique
+
+#### Question 1: What are top 5 reasons to cause death in Benin and Mozambique, and what may be the reason for it?
+```{r, echo=FALSE,eval=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+```{r read_data}
+annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv")
+```
+
+```{r}
+Benin_and_Mozambique_Meningitis <- annual_number_of_deaths_by_cause%>%
+  filter(Country %in% c("Benin",
+                        "Mozambique"))%>%
+  filter(Year >= 2000)%>%
+  group_by(Country)%>%
+  summarise("Meningitis" = sum(Meningitis), 
+            "Alzheimer's disease and other dementias" = sum(`Alzheimer's disease and other dementias`),
+            "Parkinson's disease" = sum(`Parkinson's disease`),
+            "Nutritional deficiencies" = sum(`Nutritional deficiencies`),
+            "Malaria" = sum(`Malaria`),
+            "Drowning" = sum(`Drowning`),
+            "Interpersonal violence" = sum(`Interpersonal violence`),
+            "Maternal disorders" = sum(`Maternal disorders`),
+            "HIV/AIDS" = sum(`HIV/AIDS`),
+            "Drug use disorders" = sum(`Drug use disorders`),
+            "Tuberculosis" = sum(`Tuberculosis`),
+            "Cardiovascular diseases" = sum(`Cardiovascular diseases`),
+            "Lower respiratory infections" = sum(`Lower respiratory infections`),
+            "Neonatal disorders" = sum(`Neonatal disorders`),
+            "Alcohol use disorders" = sum(`Alcohol use disorders`),
+            "Self-harm" = sum(`Self-harm`),
+            "Exposure to forces of nature" = sum(`Exposure to forces of nature`),
+            "Diarrheal diseases" = sum(`Diarrheal diseases`),
+            "Environmental heat and cold exposure" = sum(`Environmental heat and cold exposure`),
+            "Neoplasms" = sum(`Neoplasms`),
+            "Conflict and terrorism" = sum(`Conflict and terrorism`),
+            "Diabetes mellitus" = sum(`Diabetes mellitus`),
+            "Chronic kidney disease" = sum(`Chronic kidney disease`),
+            "Poisonings" = sum(`Poisonings`),
+            "Protein-energy malnutrition" = sum(`Protein-energy malnutrition`),
+            "Terrorism (deaths)" = sum(`Terrorism (deaths)`),
+            "Road injuries" = sum(`Road injuries`),
+            "Chronic respiratory diseases" = sum(`Chronic respiratory diseases`),
+            "Cirrhosis and other chronic liver diseases" = sum(`Cirrhosis and other chronic liver diseases`),
+            "Digestive diseases" = sum(`Digestive diseases`),
+            "Fire, heat, and hot substances" = sum (`Fire, heat, and hot substances`),
+            "Acute hepatitis" = sum(`Acute hepatitis`)
+            )%>%
+  
+  print()
+
+
+```
+
