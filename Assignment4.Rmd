@@ -46,24 +46,26 @@ output:
 ### Benin and Mozambique
 
 #### Question 1: What are top 5 reasons to cause death in Benin and Mozambique, and what may be the reason for it?
-```{r, echo=FALSE,eval=FALSE}
+#### Question 2: What is the development trend of these reasons in the above question?
+```{r}
 library(tidyverse)
 library(ggplot2)
 library(readr)
 library(knitr)
+library(gridExtra)
 ```
-
-```{r read_data}
-annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv")
-```
-
+#### Findings
 ```{r}
-Benin_and_Mozambique_Meningitis <- annual_number_of_deaths_by_cause%>%
+annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
+    col_types = cols(`Number of executions` = col_double()))
+```
+```{r Benin_and_Mozambique_death}
+Benin_and_Mozambique <- annual_number_of_deaths_by_cause %>%
   filter(Country %in% c("Benin",
                         "Mozambique"))%>%
   filter(Year >= 2000)%>%
   group_by(Country)%>%
-  summarise("Meningitis" = sum(Meningitis), 
+  summarise("Meningitis" = sum(`Meningitis`), 
             "Alzheimer's disease and other dementias" = sum(`Alzheimer's disease and other dementias`),
             "Parkinson's disease" = sum(`Parkinson's disease`),
             "Nutritional deficiencies" = sum(`Nutritional deficiencies`),
@@ -98,7 +100,91 @@ Benin_and_Mozambique_Meningitis <- annual_number_of_deaths_by_cause%>%
             )%>%
   
   print()
+```
 
+According to that table \@ref(tab: Benin_and_Mozambique_death), Top five death reasons for Benin from 2000 until now are: Malaria, Neonatal disorders, Lower respiratory infections, cardiovascular disease, Diarrheal diseases.
+Meanwhile, top five death reasons for Mozambique from 2000 unitl now are: HIV/AIDS, Malaria,Neonatal disorders, Cardiovascular diseases,Tuberculosis.
+Different from other high-incoem countries with Cardiovascular diseases as the main cause, these two low-income countries's death rate may caused by infectious disease and Neonatal disorders, due to the poor medical system and lack of vaccine and hospital according to @mbaye2019telling.
+
+```{r Benintopfiveplot,fig.cap = "figure of top5 death reason in Benin"}
+Top_five_Benin <- annual_number_of_deaths_by_cause %>%
+ filter(Country == "Benin")%>%
+  filter(Year >= 2000)%>%
+   select( "Country",
+          "Year",
+          "Malaria", 
+          "Neonatal disorders", 
+          "Lower respiratory infections", 
+          "Cardiovascular diseases", 
+          "Diarrheal diseases"
+         )
+  
+
+P1 <- ggplot(Top_five_Benin,
+             aes(x = Year))+
+  geom_line(aes (y=Malaria),
+            size=1)
+P2 <- ggplot(Top_five_Benin,
+             aes(x = Year))+
+  geom_line(aes (y= `Neonatal disorders`),
+            size=1)
+P3 <- ggplot(Top_five_Benin,
+             aes(x = Year))+
+  geom_line(aes (y= `Lower respiratory infections`),
+            size=1)
+P4 <- ggplot(Top_five_Benin,
+             aes(x = Year))+
+  geom_line(aes (y= `Cardiovascular diseases`),
+            size=1)
+P5 <- ggplot(Top_five_Benin,
+             aes(x = Year))+
+  geom_line(aes (y= `Diarrheal diseases`),
+            size=1)
+gridExtra::grid.arrange(P1,P2,P3,P4,P5)
 
 ```
 
+
+```{r Mozambiquetopfiveplot,fig.cap = "figure of top5 death reason in Mozambique"}
+Top_five_Mozambique <- annual_number_of_deaths_by_cause %>%
+ filter(Country == "Mozambique")%>%
+  filter(Year >= 2000)%>%
+   select( "Country",
+          "Year",
+          "HIV/AIDS", 
+          "Malaria", 
+          "Neonatal disorders", 
+          "Cardiovascular diseases", 
+          "Tuberculosis"
+         )
+  
+
+P6 <- ggplot(Top_five_Mozambique,
+             aes(x = Year))+
+  geom_line(aes (y=`HIV/AIDS`),
+            size=1)
+P7 <- ggplot(Top_five_Mozambique,
+             aes(x = Year))+
+  geom_line(aes (y= `Malaria`),
+            size=1)
+P8 <- ggplot(Top_five_Mozambique,
+             aes(x = Year))+
+  geom_line(aes (y= `Neonatal disorders`),
+            size=1)
+P9 <- ggplot(Top_five_Mozambique,
+             aes(x = Year))+
+  geom_line(aes (y= `Cardiovascular diseases`),
+            size=1)
+P10 <- ggplot(Top_five_Mozambique,
+             aes(x = Year))+
+  geom_line(aes (y= `Tuberculosis`),
+            size=1)
+gridExtra::grid.arrange(P6,P7,P8,P9,P10)
+```
+
+
+#### Summary
+According to figure graph\@ref(fig:Benintopfiveplot), accept Diarrheal disease, all the other four disease is increasing from 2000 until now.Lower respiratory infections death reached the peak around 2015, and begin to decrease in recent years.
+According to figure graph\@ref(fig:Mozambiquetopfiveplot), For Mozambique, the death rate of Cardiovascular disease was increasing from 2000 unitl now. Death number for HIV and Tuberculosis reached the peak in around 2013 and begin to drop.The death number of Malaria and Neonatal disorder is deceasing from 2000 until now.
+In order to help these low-income countries get out of these difficulties, and save more life, high-income developed countries should help them by serving more medicine and vaccine. Also, more medical teams should support Africa and help patients in those low-income countries.
+To make these tables and figure, I can also cite R packages as follows @tidyverse, @ggplot2, @gridExtra.
