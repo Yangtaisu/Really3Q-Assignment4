@@ -64,10 +64,10 @@ annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-ca
 
 ```
 
-```{r}
+```{r Mexico}
 Mexico <- annual_number_of_deaths_by_cause %>%
   filter(Country == "Mexico") %>%
-  filter(!is.na(Code), Year >= 2010) %>%
+  filter(!is.na(Code), Year >= 2005) %>%
   pivot_longer(cols = c(4:36), 
                names_to = "Death_cause", 
                values_to = "Count") %>% 
@@ -80,10 +80,10 @@ kable(caption = "Deaths by cause of Mexico")
   
 ```
 
-```{r}
+```{r Germany}
 Germany <- annual_number_of_deaths_by_cause %>%
   filter(Country == "Germany") %>%
-  filter(!is.na(Code), Year >= 2010) %>%
+  filter(!is.na(Code), Year >= 2005) %>%
   pivot_longer(cols = c(4:36), 
                names_to = "Death_cause", 
                values_to = "Count") %>% 
@@ -95,11 +95,11 @@ head(n=5) %>%
 kable(caption = "Deaths by cause of Germany")
 ```
 
-```{r}
+```{r Mexicofigure,fig.cap = "Deaths by cause in Mexico"}
 Mexico_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Mexico",
-         Year >= 2010) %>% 
+         Year >= 2005) %>% 
   pivot_longer(cols =  -c(1:2), 
                names_to = "Death_cause", 
                values_to = "Count") 
@@ -113,14 +113,14 @@ Mexico_plot <- Mexico_cause %>%
   geom_line(aes(y = Count,
   color = Death_cause)) +
   ggtitle("Mexico death cause trend")
-gridExtra::grid.arrange(Mexico_plot)
+gridExtra::grid.arrange(Mexico_plot, nrow = 2)
 ```
 
-```{r}
+```{r Germanyfigure,fig.cap = "Deaths by cause in Germany"}
 Germany_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Germany",
-         Year >= 2010) %>% 
+         Year >= 2005) %>% 
   pivot_longer(cols =  -c(1:2), 
                names_to = "Death_cause", 
                values_to = "Count") 
@@ -134,5 +134,5 @@ Germany_plot <- Germany_cause %>%
   geom_line(aes(y = Count,
   color = Death_cause)) +
   ggtitle("Germany death cause trend")
-gridExtra::grid.arrange(Germany_plot)
+gridExtra::grid.arrange(Germany_plot, nrow = 2)
 ```
