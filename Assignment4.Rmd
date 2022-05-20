@@ -56,7 +56,7 @@ library(gridExtra)
 
 ## Main body
 
-### Mexico and Peru
+### Mexico and India
 
 ```{r  results='hide'}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
@@ -66,45 +66,33 @@ annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-ca
 
 
 ```{r}
-Mexico_and_Peru <- annual_number_of_deaths_by_cause %>%
-  filter(Country %in% c("Mexico", "Peru")) %>%
-  (filter(!is.na(Code), Year >= 2005)%>%
-  group_by(Year) %>%
-  na.omit() %>%
-  summarise("Meningitis_total" = sum(`Meningitis`), 
-            "Alzheimer's disease and other dementias_total" = sum(`Alzheimer's disease and other dementias`),
-            "Parkinson's disease_total" = sum(`Parkinson's disease`),
-            "Nutritional deficiencies_total" = sum(`Nutritional deficiencies`),
-            "Malaria_total" = sum(`Malaria`),
-            "Drowning" = sum(`Drowning`),
-            "Interpersonal violence_total" = sum(`Interpersonal violence`),
-            "Maternal disorders_total" = sum(`Maternal disorders`),
-            "HIV/AIDS_total" = sum(`HIV/AIDS`),
-            "Drug use disorders_total" = sum(`Drug use disorders`),
-            "Tuberculosis_total" = sum(`Tuberculosis`),
-            "Cardiovascular diseases_total" = sum(`Cardiovascular diseases`),
-            "Lower respiratory infections_total" = sum(`Lower respiratory infections`),
-            "Neonatal disorders_total" = sum(`Neonatal disorders`),
-            "Alcohol use disorders_total" = sum(`Alcohol use disorders`),
-            "Self-harm_total" = sum(`Self-harm`),
-            "Exposure to forces of nature_total" = sum(`Exposure to forces of nature`),
-            "Diarrheal diseases_total" = sum(`Diarrheal diseases`),
-            "Environmental heat and cold exposure_total" = sum(`Environmental heat and cold exposure`),
-            "Neoplasms_total" = sum(`Neoplasms`),
-            "Conflict and terrorism_total" = sum(`Conflict and terrorism`),
-            "Diabetes mellitus_total" = sum(`Diabetes mellitus`),
-            "Chronic kidney disease_total" = sum(`Chronic kidney disease`),
-            "Poisonings_total" = sum(`Poisonings`),
-            "Protein-energy malnutrition_total" = sum(`Protein-energy malnutrition`),
-            "Terrorism (deaths)_total" = sum(`Terrorism (deaths)`),
-            "Road injuries_total" = sum(`Road injuries`),
-            "Chronic respiratory diseases_total" = sum(`Chronic respiratory diseases`),
-            "Cirrhosis and other chronic liver diseases_total" = sum(`Cirrhosis and other chronic liver diseases`),
-            "Digestive diseases_total" = sum(`Digestive diseases`),
-            "Fire, heat, and hot substances_total" = sum (`Fire, heat, and hot substances`),
-            "Acute hepatitis_total" = sum(`Acute hepatitis`)
-            )%>%
-  head(Mexico_and_Peru, 3)
+Mexico <- annual_number_of_deaths_by_cause %>%
+  filter(Country == "Mexico") %>%
+  filter(!is.na(Code), Year >= 2005) %>%
+  pivot_longer(cols = c(4:36), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>% 
+  group_by(Death_cause) %>% 
+  summarise(Death_amount=sum(Count, na.rm = TRUE))%>%
+  arrange(desc(Death_amount))
+Mexico %>%
+head(n=5) %>%
+kable(caption = "Deaths by cause of Mexico")
   
+```
+
+```{r}
+India <- annual_number_of_deaths_by_cause %>%
+  filter(Country == "India") %>%
+  filter(!is.na(Code), Year >= 2005) %>%
+  pivot_longer(cols = c(4:36), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>% 
+  group_by(Death_cause) %>% 
+  summarise(Death_amount=sum(Count, na.rm = TRUE))%>%
+  arrange(desc(Death_amount))
+India %>%
+head(n=5) %>%
+kable(caption = "Deaths by cause of Mexico")
 ```
 
