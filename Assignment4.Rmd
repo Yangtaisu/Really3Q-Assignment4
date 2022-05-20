@@ -56,7 +56,7 @@ library(gridExtra)
 
 ## Main body
 
-### Mexico and India
+### Mexico and Germany
 
 ```{r  results='hide'}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
@@ -82,8 +82,8 @@ kable(caption = "Deaths by cause of Mexico")
 ```
 
 ```{r}
-India <- annual_number_of_deaths_by_cause %>%
-  filter(Country == "India") %>%
+Germany <- annual_number_of_deaths_by_cause %>%
+  filter(Country == "Germany") %>%
   filter(!is.na(Code), Year >= 2005) %>%
   pivot_longer(cols = c(4:36), 
                names_to = "Death_cause", 
@@ -91,8 +91,49 @@ India <- annual_number_of_deaths_by_cause %>%
   group_by(Death_cause) %>% 
   summarise(Death_amount=sum(Count, na.rm = TRUE))%>%
   arrange(desc(Death_amount))
-India %>%
+Germany %>%
 head(n=5) %>%
-kable(caption = "Deaths by cause of Mexico")
+kable(caption = "Deaths by cause of Germany")
 ```
+
+
+```{r}
+Mexico_plot <- Mexico %>%
+  ggplot(Mexico, mapping = aes(x=Year,
+                               y=Count,
+                           color=Death_cause))+
+  geom_line()+
+  theme_bw()
+print(Mexico_plot)
+  
+Mexico_plot <- annual_number_of_deaths_by_cause %>% 
+  filter(Country == "Mexico",
+         Year >= 2005) %>% 
+  pivot_longer(cols =  -c(1:2), 
+               names_to = "Death_cause", 
+               values_to = "Count") %>%
+    ggplot(Mexico, mapping = aes(x=Year,
+                               y=Count,
+                           color=Death_cause))+
+  geom_line()+
+  theme_bw()
+print(Mexico_plot)
+```
+
+```{r}
+Mexico_plot <- annual_number_of_deaths_by_cause %>% 
+    select(-2, -4) %>% 
+  filter(Country == "Mexico",
+         Year >= 2005) %>% 
+  pivot_longer(cols =  -c(1:2), 
+               names_to = "Death_cause", 
+               values_to = "Count") 
+P1<- ggplot(Mexico_plot,
+             aes(x = Year,
+                 y = Count,
+                color=Death_cause))+
+  geom_line()+
+  theme_bw()
+```
+
 
