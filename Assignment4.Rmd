@@ -98,42 +98,44 @@ kable(caption = "Deaths by cause of Germany")
 
 
 ```{r}
-Mexico_plot <- Mexico %>%
-  ggplot(Mexico, mapping = aes(x=Year,
-                               y=Count,
-                           color=Death_cause))+
-  geom_line()+
-  theme_bw()
-print(Mexico_plot)
-  
-Mexico_plot <- annual_number_of_deaths_by_cause %>% 
-  filter(Country == "Mexico",
-         Year >= 2005) %>% 
-  pivot_longer(cols =  -c(1:2), 
-               names_to = "Death_cause", 
-               values_to = "Count") %>%
-    ggplot(Mexico, mapping = aes(x=Year,
-                               y=Count,
-                           color=Death_cause))+
-  geom_line()+
-  theme_bw()
-print(Mexico_plot)
-```
-
-```{r}
-Mexico_plot <- annual_number_of_deaths_by_cause %>% 
+Mexico_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Mexico",
          Year >= 2005) %>% 
   pivot_longer(cols =  -c(1:2), 
                names_to = "Death_cause", 
                values_to = "Count") 
-P1<- ggplot(Mexico_plot,
-             aes(x = Year,
-                 y = Count,
-                color=Death_cause))+
-  geom_line()+
-  theme_bw()
+Mexico_plot<- Mexico_cause %>%
+  filter(Death_cause %in% c("Cardiovascular diseases", 
+                            "Neoplasms",
+                            "Digestive diseases",
+                            "Chronic kidney disease",
+                            "Diabetes mellitus")) %>%
+  ggplot(mapping = aes(x = Year)) +
+  geom_line(aes(y = Count,
+  color = Death_cause)) +
+  ggtitle("Mexico death cause trend")
+gridExtra::grid.arrange(Mexico_plot)
 ```
 
+```{r}
+Germany_cause <- annual_number_of_deaths_by_cause %>% 
+    select(-2, -4) %>% 
+  filter(Country == "Germany",
+         Year >= 2005) %>% 
+  pivot_longer(cols =  -c(1:2), 
+               names_to = "Death_cause", 
+               values_to = "Count") 
+Germany_plot<- Germany_cause %>%
+  filter(Death_cause %in% c("Cardiovascular diseases", 
+                            "Neoplasms",
+                            "Digestive diseases",
+                            "Alzheimer’s disease and other dementias",
+                            "Chronic respiratory diseases")) %>%
+  ggplot(mapping = aes(x = Year)) +
+  geom_line(aes(y = Count,
+  color = Death_cause)) +
+  ggtitle("Germany death cause trend")
+gridExtra::grid.arrange(Germany_plot)
+```
 
