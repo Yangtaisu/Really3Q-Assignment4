@@ -64,11 +64,10 @@ annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-ca
 
 ```
 
-
 ```{r}
 Mexico <- annual_number_of_deaths_by_cause %>%
   filter(Country == "Mexico") %>%
-  filter(!is.na(Code), Year >= 2005) %>%
+  filter(!is.na(Code), Year >= 2010) %>%
   pivot_longer(cols = c(4:36), 
                names_to = "Death_cause", 
                values_to = "Count") %>% 
@@ -84,7 +83,7 @@ kable(caption = "Deaths by cause of Mexico")
 ```{r}
 Germany <- annual_number_of_deaths_by_cause %>%
   filter(Country == "Germany") %>%
-  filter(!is.na(Code), Year >= 2005) %>%
+  filter(!is.na(Code), Year >= 2010) %>%
   pivot_longer(cols = c(4:36), 
                names_to = "Death_cause", 
                values_to = "Count") %>% 
@@ -96,20 +95,19 @@ head(n=5) %>%
 kable(caption = "Deaths by cause of Germany")
 ```
 
-
 ```{r}
 Mexico_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Mexico",
-         Year >= 2005) %>% 
+         Year >= 2010) %>% 
   pivot_longer(cols =  -c(1:2), 
                names_to = "Death_cause", 
                values_to = "Count") 
-Mexico_plot<- Mexico_cause %>%
+Mexico_plot <- Mexico_cause %>%
   filter(Death_cause %in% c("Cardiovascular diseases", 
                             "Neoplasms",
-                            "Digestive diseases",
                             "Chronic kidney disease",
+                            "Digestive diseases",
                             "Diabetes mellitus")) %>%
   ggplot(mapping = aes(x = Year)) +
   geom_line(aes(y = Count,
@@ -122,11 +120,11 @@ gridExtra::grid.arrange(Mexico_plot)
 Germany_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Germany",
-         Year >= 2005) %>% 
+         Year >= 2010) %>% 
   pivot_longer(cols =  -c(1:2), 
                names_to = "Death_cause", 
                values_to = "Count") 
-Germany_plot<- Germany_cause %>%
+Germany_plot <- Germany_cause %>%
   filter(Death_cause %in% c("Cardiovascular diseases", 
                             "Neoplasms",
                             "Digestive diseases",
@@ -138,4 +136,3 @@ Germany_plot<- Germany_cause %>%
   ggtitle("Germany death cause trend")
 gridExtra::grid.arrange(Germany_plot)
 ```
-
