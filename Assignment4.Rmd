@@ -42,3 +42,12 @@ output:
     citation_package: biblatex
     toc: false
 ---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(knitr)
+library(plotly)
+```
+
