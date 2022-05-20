@@ -1,17 +1,43 @@
 ---
-title: 'Title'
-author: "ShiJingyi"
+title: " select"
+author:
+- familyname: Shi
+  othernames: Jingyi
+  address: Monash University
+  email: jshi0067@student.monash.edu
+  correspondingauthor: true
+  qualifications:  32267886
+- familyname: Sun
+  othernames: Miao
+  address: Monash University
+  email: msun0008@student.monash.edu
+  correspondingauthor: true
+  qualifications: 28380584
+- familyname: Ou
+  othernames: Jingwen
+  address: Monash University
+  email: jouu0006@student.monash.edu
+  correspondingauthor: true
+  qualifications:  32269633
+- familyname: Qin
+  othernames: Yu
+  address: Monash University
+  email: yqin0016@student.monash.edu
+  correspondingauthor: true
+  qualifications:  32606745
+department: Faculty of Business and Statistic
+organization: Monash University ETC5513 Group Really3Q
 bibliography: references.bib
 biblio-style: authoryear-comp
 linestretch: 1.5
 output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+  bookdown::pdf_document2:
+    template: monashreport2.tex
     fig_caption: yes
     fig_height: 5
     fig_width: 8
     includes:
+      in_header: preamble.tex
     keep_tex: yes
     citation_package: biblatex
     toc: false
@@ -66,14 +92,12 @@ world_data %>%
 ```
 
 ```{r worldplot,fig.cap ="Number of deaths by cause, World, 1990 to 2019"}
-p1 <- ggplot(world_data,
+ggplot(world_data,
        mapping = aes(x=Year,
                      y=Death_amount,
                      color=Death_cause))+
   geom_line()+
   theme_bw()
-
-  ggplotly(p1)
 ```
 \@ref(fig:worldplot)
 
@@ -100,7 +124,7 @@ AZ_life_expectancy <- life_expectancy %>% filter(
 DL_data <- disease_data %>% 
   left_join(AZ_life_expectancy,by=c("Country","Year"))
 
-p2 <-ggplot(DL_data,
+ggplot(DL_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
@@ -117,7 +141,7 @@ p2 <-ggplot(DL_data,
     facet_wrap(~Country,
              scales = "free_y")+
   theme_bw()
-  ggplotly(p2)
+
 ```
 
 (2).select death due to other factors
@@ -145,7 +169,7 @@ DD_data <- other_data %>%
 
 
 
-p3 <- ggplot(DD_data,
+ ggplot(DD_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
@@ -162,7 +186,7 @@ p3 <- ggplot(DD_data,
   
     facet_wrap(~Country,
              scales = "free_y")
-  ggplotly(p3)
+
 ```
 
 
