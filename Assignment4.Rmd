@@ -95,7 +95,7 @@ head(n=5) %>%
 kable(caption = "Deaths by cause of Germany")
 ```
 
-```{r Mexicofigure,fig.cap = "Deaths by cause in Mexico"}
+```{r MexicoAndGermanyfigure,fig.cap = "Deaths by cause in Mexico and Germany"}
 Mexico_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Mexico",
@@ -113,10 +113,7 @@ Mexico_plot <- Mexico_cause %>%
   geom_line(aes(y = Count,
   color = Death_cause)) +
   ggtitle("Mexico death cause trend")
-gridExtra::grid.arrange(Mexico_plot, nrow = 2)
-```
 
-```{r Germanyfigure,fig.cap = "Deaths by cause in Germany"}
 Germany_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Germany",
@@ -128,11 +125,12 @@ Germany_plot <- Germany_cause %>%
   filter(Death_cause %in% c("Cardiovascular diseases", 
                             "Neoplasms",
                             "Digestive diseases",
-                            "Alzheimer’s disease and other dementias",
+                            "Alzheimer's disease and other dementias",
                             "Chronic respiratory diseases")) %>%
   ggplot(mapping = aes(x = Year)) +
   geom_line(aes(y = Count,
   color = Death_cause)) +
   ggtitle("Germany death cause trend")
-gridExtra::grid.arrange(Germany_plot, nrow = 2)
+gridExtra::grid.arrange(Mexico_plot,Germany_plot, nrow = 2)
 ```
+
