@@ -22,6 +22,9 @@ output:
 library(readr)
 library(tidyverse)
 library(knitr)
+library(plotly)
+library(broom)
+library(DT)
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
     col_types = cols(`Number of executions` = col_double()))
 GDP <- read_csv("Data/GDP.csv")
@@ -29,14 +32,14 @@ GDP <- read_csv("Data/GDP.csv")
 
 ```{r}
 df_global <-  annual_number_of_deaths_by_cause %>%
-  filter(Year %in% c(1950:2018)) %>% 
+  filter(Year %in% c(1950:2018)) %>%
   pivot_longer(
     cols =  -c(Country, Code, Year),
     names_to = "Death_cause",
     values_to = "Count"
   )
 
-df_CI <- df_global %>%  
+df_CI <- df_global %>%
   filter(Country %in% c("China", "India"))
 
 interest <- c(
@@ -49,75 +52,92 @@ interest <- c(
 )
 ```
 
-```{r global Death due to different cause}
-
-interest_global <- df_global %>% 
-  group_by(Year, Death_cause) %>% 
-  mutate(Death_global = sum(Count, na.rm = TRUE)) %>%
-  filter(Death_cause %in% interest) %>% 
-  group_by(Year,
-           Death_cause,
-           Death_global) %>% 
-  summarise()
-
-interest_global %>% 
-  ggplot(aes(x = Year,
-             y = Death_global,
-             color = Death_cause))+
-  geom_line()
-```
-
 
 
 ```{r}
-CI_Percent <- df_CI%>% 
+CI_Percent <- df_CI %>%
   group_by(Country,
-           Year) %>% 
-  mutate(Total_death = sum(Count, na.rm = TRUE)*100
-         ) %>% 
+           Year) %>%
+  mutate(Total_death = sum(Count, na.rm = TRUE) * 100) %>%
   group_by(Country,
            Year,
            Death_cause,
-           Total_death) %>% 
-  summarize(Percentage = Count/Total_death*100) %>% 
+           Total_death) %>%
+  summarize(Percentage = Count / Total_death * 100) %>%
   group_by(Country,
-           Death_cause) %>% 
-  arrange(desc(Percentage)) %>% 
+           Death_cause) %>%
+  arrange(desc(Percentage)) %>%
   filter(Death_cause %in% interest)
 
-CI_Total <- df_CI %>% 
+CI_Total <- df_CI %>%
   group_by(Country,
-           Year, 
-           Death_cause) %>% 
+           Year,
+           Death_cause) %>%
   mutate(Death_abs = sum(Count, na.rm = TRUE)) %>%
-  filter(Death_cause %in% interest) %>% 
+  filter(Death_cause %in% interest) %>%
   group_by(Year,
            Country,
            Death_cause,
-           Death_abs) %>% 
-  summarise() %>% 
-  left_join(GDP)
+           Death_abs) %>%
+  summarise() %>%
+  left_join(GDP, by = c ("Country" = "Entity",
+                         "Year" = "Year"))
 ```
 
 ```{r Percentage Change in China and India}
-Percentage_trend <- CI_Percent %>% 
+Percentage_trend <- CI_Percent %>%
   ggplot(aes(x = Year,
              y = Percentage,
-             color = Death_cause))+
-  geom_line() +
-  facet_wrap(~Country, nrow = 2, scales = "free_y")
-
-Absolute_trend <- CI_Total %>% 
-  ggplot(aes(x = Year))+
-  geom_line(aes(y = Death_abs,
              color = Death_cause)) +
-  geom_line(aes(y = gdppc*500)) +
-  facet_wrap(~Country, nrow = 2, scales = "free_y")
+  geom_line() +
+  facet_wrap( ~ Country, nrow = 2, scales = "free_y")
+
+Absolute_trend <- CI_Total %>%
+  ggplot(aes(x = Year)) +
+  geom_line(aes(y = Death_abs,
+                color = Death_cause)) +
+  geom_line(aes(y = gdppc * 500)) +
+  facet_wrap( ~ Country, nrow = 2, scales = "free_y")
 
 
-Percentage_trend
-Absolute_trend
+ggplotly(Percentage_trend)
+ggplotly(Absolute_trend)
 ```
 
+```{r Run regression with the number of deasease against GDP per capita.}
+CI_model <- CI_Total %>%
+  filter(Death_cause %in% c("Cardiovascular diseases", "Neoplasms")) %>%
+  group_by(Country,
+           Death_cause) %>%
+  nest() %>%
+  mutate(model = map(
+    .x = data,
+    .f = function(x) {
+      lm(Death_abs ~ gdppc,
+         data = x)
+    }
+  ))
+
+CI_coef <- CI_model %>%
+  mutate (tidy = map(model, tidy)) %>%
+  unnest(tidy) %>%
+  select(Country, Death_cause, term, estimate) %>%
+  pivot_wider(
+    id_cols = c("Country", "Death_cause"),
+    names_from = term,
+    values_from = estimate
+  ) %>%
+  rename("intercept" = "(Intercept)",
+         "slope" = "gdppc")
+
+CI_model_fitness <- CI_model %>%
+  mutate(glance = map(model, glance)) %>%
+  unnest(glance) %>%
+  select(Country, Death_cause, r.squared) %>%
+  mutate(r.squared = round(r.squared, 2)) %>% 
+  right_join(CI_coef)
+
+datatable(CI_model_fitness)
+```
 
 
