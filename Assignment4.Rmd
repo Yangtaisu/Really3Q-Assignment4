@@ -47,14 +47,7 @@ library(tidyverse)
 library(ggplot2)
 library(readr)
 library(knitr)
-library(plotly)
 ```
-
-## Introduction
-
-## Main body
-
-### Australia and New zealand
 
 ```{r read_data, results='hide'}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
@@ -63,7 +56,13 @@ life_expectancy <- read_csv("Data/life-expectancy.csv")
 share_with_depression <- read_csv("Data/share-with-depression.csv")
 ```
 
-1.List all kinds of death causes
+
+## Introduction
+
+Do you know around 56 million people die each year?
+What caused their death? How did the causes of death change over time and difference between countries and world regions? And can we prevent death early. There are the big questions we are answering in our presentation. Our data is from “data in our world”’, It counts more than 20 causes of death in countries around the world from 1990 to 2018. For this table\@ref(tab:deathcauses), here is a list of the causes of death covered by this report.
+From this plot\@ref(fig:worldplot), we can see Cardiovascular diseases are the leading cause of death globally. The second biggest cause is Neoplasms. What about the specific situation in the different countries? The four members of our group will choose two countries of interest and make an analysis.
+
 ```{r deathcauses}
 world_data <-annual_number_of_deaths_by_cause %>% 
   filter(!is.na(Code),
@@ -80,17 +79,6 @@ world_data %>% filter(Year==1990) %>%
 
 ```
 
-For this table\@ref(tab:deathcauses),
-
-2.World data
-```{r worldtable}
-world_data %>% 
-  filter(Year==2018) %>% 
-  arrange(desc(Death_amount)) %>% 
-  head() %>% 
-  kable(caption = "The world' top six causes of death in 2018")
-```
-
 ```{r worldplot,fig.cap ="Number of deaths by cause, World, 1990 to 2019"}
 ggplot(world_data,
        mapping = aes(x=Year,
@@ -99,11 +87,16 @@ ggplot(world_data,
   geom_line()+
   theme_bw()
 ```
-\@ref(fig:worldplot)
 
-3.Australia and New Zealand data
+## Main body
 
-(1).Select death due to disease factors
+### Australia and New zealand
+
+**Q1: What can be observed in the chart of causes of death due to disease?**
+
+**Q2: What can be observed in the chart of causes of death due to others?**
+
+(1).Plot death due to disease factors
 ```{r diseaseplot,fig.cap="Number of deaths by disease causes, 1990 to 2018"}
 disease_data <- annual_number_of_deaths_by_cause %>% 
   select(1,3,5,6,7,8,9,12,13,14,15,16,17,18,22,24,26,27,32,33,34,36) %>% 
@@ -112,7 +105,9 @@ disease_data <- annual_number_of_deaths_by_cause %>%
   pivot_longer(cols =  -c(1:3), 
                names_to = "Death_cause", 
                values_to = "Count")
+```
 
+```{r lifeexpendcy}
 AZ_life_expectancy <- life_expectancy %>% filter(
   Entity %in% c("Australia","Switzerland"),
   Year %in% c(1990:2018)
@@ -121,6 +116,12 @@ AZ_life_expectancy <- life_expectancy %>% filter(
          "Life_expectancy" = "Life expectancy") %>% 
   select(-Code)
 
+AZ_life_expectancy %>% 
+  tail() %>% 
+  kable(caption = "Life Expectancy in Australia and Switzerland")
+```
+
+```{r diseaseplot,fig.cap ="Number of deaths by disease causes in Australia and Switzerland."}
 DL_data <- disease_data %>% 
   left_join(AZ_life_expectancy,by=c("Country","Year"))
 
@@ -144,8 +145,8 @@ ggplot(DL_data,
 
 ```
 
-(2).select death due to other factors
-```{r otherplot,fig.cap="Number of deaths by other causes, 1990 to 2018"}
+(2).Plot death due to other factors
+```{r otherplot,fig.cap ="Number of deaths by other causes in Australia and Switzerland."}
 other_data <- annual_number_of_deaths_by_cause %>% 
   select(1,3,4,10,11,19,20,21,23,25,28,29,30,31,35) %>% 
   filter(Country %in% c("Australia","Switzerland"),
@@ -155,42 +156,32 @@ other_data <- annual_number_of_deaths_by_cause %>%
                values_to = "Count")
 
 
-AZ_share_with_depression <-share_with_depression  %>% filter(
-  Entity %in% c("Australia","Switzerland"),
-  Year %in% c(1990:2018)
-) %>% 
-  rename("Country" = "Entity",
-         "Depressive_disorders" = "Depressive disorders") %>% 
-  select(-Code)
-
-DD_data <- other_data %>% 
-  left_join(AZ_share_with_depression,by=c("Country","Year"))
-
-
-
-
- ggplot(DD_data,
+ ggplot(other_data,
        mapping = aes(x=Year,
                      y=Count,
                      color=Death_cause))+
-  geom_line()+  
-  geom_line(aes(y=Depressive_disorders*300),
-            color="#2399F5",
-            size=1)+
-  geom_point(aes(y=Depressive_disorders*300),
-             color="#99C3E5",
-             size=1)+
-    scale_y_continuous(name = "Number of deaths by other causes",
-    sec.axis = sec_axis(trans =~./300,
-                        name = "Depressive disorders %"))+
-  
+  geom_line()+
     facet_wrap(~Country,
              scales = "free_y")
 
 ```
 
+### Summary
+
+As we can see from this graph\@ref(fig:diseaseplot), cardiovascular disease and Neoplasm are the leading causes of death in both Australia and Switzerland, with cardiovascular disease decreasing but starting to rise again after about 2011, and the number of deaths from Alzheimer's  and neoplasm rising sharply. This result confused me. I would have thought that because of the advancement of medicine, the causes of death from disease should gradually decrease.So I looked up these three conditions online, all of which are highly prevalent  in older people, and then in this table \@ref(tab:lifeexpendcy), I listed life expectancy in Australia and Switzerland from 1990 to 2019.As can be seen from the table\@ref(tab:lifeexpendcy), life expectancy increases as the years go by, meaning that more people are living old enough so that the number of people who are sick increases.I have added this life expectancy line to the first graph for better visualisation and you can see that it is all on an up trend.
+For other causes. This graph \@ref(fig:otherplot)shows that self-harm, road injuries are the main causes of death from other causes. Road injuries have been decreasing and I think this is closely related to the improving traffic laws and the popularity of driving tests. I noticed that Australia had an unusual peak in 2009. I searched Google for three keywords: Australia Fire 2009 and I got the information that there was a very seriousforest fire in Vic in 2009. So in 2009 an unusually high number of people died in fires in Australia.
 
 
+
+
+
+
+
+
+
+
+
+## Colusion
 
 @ggplot, @tidyverse,@readr
 
