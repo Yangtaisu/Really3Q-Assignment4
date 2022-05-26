@@ -1,17 +1,43 @@
 ---
-title: 'Title'
-author: "Miao Sun"
+title: "The causes of death around the world"
+author:
+- familyname: Shi
+  othernames: Jingyi
+  address: Monash University
+  email: jshi0067@student.monash.edu
+  correspondingauthor: true
+  qualifications:  32267886
+- familyname: Sun
+  othernames: Miao
+  address: Monash University
+  email: msun0008@student.monash.edu
+  correspondingauthor: true
+  qualifications: 28380584
+- familyname: Ou
+  othernames: Jingwen
+  address: Monash University
+  email: jouu0006@student.monash.edu
+  correspondingauthor: true
+  qualifications:  32269633
+- familyname: Qin
+  othernames: Yu
+  address: Monash University
+  email: yqin0016@student.monash.edu
+  correspondingauthor: true
+  qualifications:  32606745
+department: Faculty of Business and Statistic
+organization: Monash University ETC5513 Group Really3Q
 bibliography: references.bib
 biblio-style: authoryear-comp
 linestretch: 1.5
 output:
-  prettydoc::html_pretty:
-    theme: HPSTR
-    highlight: github
+  bookdown::pdf_document2:
+    template: monashreport2.tex
     fig_caption: yes
     fig_height: 5
     fig_width: 8
     includes:
+      in_header: preamble.tex
     keep_tex: yes
     number_sections: yes
     citation_package: biblatex
@@ -25,9 +51,7 @@ knitr::opts_chunk$set(echo = FALSE,
 library(readr)
 library(tidyverse)
 library(knitr)
-library(plotly)
 library(broom)
-library(DT)
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
     col_types = cols(`Number of executions` = col_double()))
 GDP <- read_csv("Data/GDP.csv")
@@ -57,7 +81,7 @@ interest <- c(
 
 
 
-```{r}
+```{r ,messages = FALSE, warning = FALSE}
 CI_Percent <- df_CI %>%
   group_by(Country,
            Year) %>%
@@ -66,7 +90,7 @@ CI_Percent <- df_CI %>%
            Year,
            Death_cause,
            Total_death) %>%
-  summarize(Percentage = Count / Total_death * 100) %>%
+  summarize(Percentage = Count / Total_death * 100, .groups = 'drop') %>%
   group_by(Country,
            Death_cause) %>%
   arrange(desc(Percentage)) %>%
@@ -82,25 +106,25 @@ CI_Total <- df_CI %>%
            Country,
            Death_cause,
            Death_abs) %>%
-  summarise() %>%
+  summarise(.groups = 'drop') %>%
   left_join(GDP, by = c ("Country" = "Entity",
                          "Year" = "Year"))
 ```
-## Introduction:
-
-The health condition are different due to the resources different countries control. Which lead to an inequality in health in different areas @emadi2021global. Country in different developing condition would have different health conditions. This section will focus on 2 typical developing countries : China and India. Investigate the disease that cause the death in these 2 countries most and how they are related with the GDP per capita.
+The health conditions are different due to the resources that different countries control. Which leads to an inequality in health in different areas @emadi2021global. Countries in different developing conditions would have different health conditions. This section will focus on 2 typical developing countries : China and India. Investigate diseases that cause the most death in China and India, and how they are related with the GDP per capita.
 
 
 ## Research Question:
 
 
-### Q1: What are the diseases that growing fastest in developing country?
+### Q1: What are the diseases that cause the most death in China and India?
 
 
-### Q2: How the diseases changes with the change of GDP per capita?
+### Q2: How the death caused by those diseases change with the change of GDP per capita??
 
 
-```{r Percentage Change in China and India}
+We will focusing on 6 typical diseases: they are : Cardiovascular Diseases, Diabetes mellitus, HIV, Neoplasms, Nutritional deficiencies and, Malaria
+
+```{r plot}
 Percentage_trend <- CI_Percent %>%
   ggplot(aes(x = Year,
              y = Percentage,
@@ -116,10 +140,22 @@ Absolute_trend <- CI_Total %>%
   facet_wrap( ~ Country, nrow = 2, scales = "free_y")
 
 
-ggplotly(Percentage_trend)
-ggplotly(Absolute_trend)
 ```
 
+```{r percendeath, fig.cap = "Percentage of different causes of death by year"}
+Percentage_trend
+```
+
+
+In this graph \@ref(fig:percendeath) , it is clear that both Cardiovascular Diseases and Neoplasms contribute the most among other diseases we are interested in both China and India and the trend is still increasing. So we will mainly focus on these 2 diseases. There are 43% deaths caused by Cardiovascular diseases and 26% caused by Neoplasms in China. 29% deaths caused by Cardiovascular diseases and 10% caused by Neoplasms in India. So, diseases that cause the most deaths in China and India are Cardiovascular diseases and Neoplasms.
+
+
+```{r totaldeath, fig.cap = "Total number of death by year and GDP per capita"}
+Absolute_trend
+```
+
+
+In this graph \@ref(fig:totaldeath), we combine them with the GDP per capita graph, which is the black line. There is a clear trend that the death caused by these 2 diseases are highly correlated with GDP per capita. To find out the relations between them. 
 
 ```{r Run regression with the number of deasease against GDP per capita.}
 CI_model <- CI_Total %>%
@@ -152,17 +188,21 @@ CI_model_fitness <- CI_model %>%
   unnest(glance) %>%
   select(Country, Death_cause, r.squared) %>%
   mutate(r.squared = round(r.squared, 2)) %>% 
-  right_join(CI_coef) %>% 
+  right_join(CI_coef, by = c("Country", "Death_cause")) %>% 
   mutate(intercept = round(intercept, 2),
          slope = round(slope, 2))
-
-datatable(CI_model_fitness)
 ```
-In this graph, it is clear that both Cardiovascular diseases and Neoplasms contribute the most among other interested diseases in both China and India. additionally, Diabete are increasing as where. but slower than Cardiovascular diseases and Neoplasms so i will not discuses it. 
 
-Further more, When we combine them with the GDP per capita graph. There is a clear trend that the death caused by these 2 disease are highly correlated with the GDP growth. After running regression. we found that more than 90% of death caused by Cardiovascular diseases and Neoplasms can be explained by the model. In China, for every 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms are 182 and 90. In India, for every 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms are 221 and 85 respectively.
+```{r modelparameter}
+CI_model_fitness %>% kable(caption = "Parameters of model")
+```
 
-This conclusion is corresponding to the common sense as well. because both Cardiovascular diseases and Neoplasms occurs more in area with higher income. Longer one lived, higher the possibility one can get these 2 diseases. Richer a country is, more resources can be used on transmitted disease like HIV and Malaria. therefore we can observed that death caused by transmitted diseases are decreasing to a very low level
 
+I run a regression, using the death caused by "Cardiovascular diseases" and "Neoplasms" against GDP per capita showan in the table \@ref(tab:modelparameter). The r^2 is quite high means they fitted into the linear model quite well
 
-## References: 
+ 
+More than 90% of deaths caused by Cardiovascular diseases and Neoplasms can be explained by the model. In China, for every 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms will increase for 182 and 90. In India, for 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms increased by  221 and 85 respectively.
+
+It is corresponding to common sense as well. Because both Cardiovascular Diseases and Neoplasms occur more in the area with higher income. The longer one lives, the higher the possibility one can get these 2 diseases. Richer a country is, more resources can be used on transmitted diseases. therefore we can observe that death caused by transmitted diseases decreased to a very low level
+
+In this part, I used package readr @readr to read data, package broom @broom to get statistic data from model, package knitr @knitr to make table and package tidyverse @tidyverse for basic calculation.
