@@ -72,7 +72,9 @@ disease_data_Benin <- annual_number_of_deaths_by_cause %>%
   summarise(Death_amount=sum(Count, na.rm = TRUE))%>%
 arrange(desc(Death_amount))%>%
   head(n=5)%>%
-  kable(caption = "The top 5 death causes of Benin from 2000 until now")
+kable(caption = "The top 5 death causes of Benin from 2000 until now")%>%
+  print()
+  
   
 ```
 
@@ -89,7 +91,8 @@ disease_data_Mozambique <- annual_number_of_deaths_by_cause %>%
   summarise(Death_amount=sum(Count, na.rm = TRUE))%>%
 arrange(desc(Death_amount))%>%
   head(disease_data_Mozambique,n=5)%>%
-  kable(caption = "The top 5 death causes of Mozambique from 2000 until now")
+  kable(caption = "The top 5 death causes of Mozambique from 2000 until now")%>%
+  print()
 ```
 According to that table \@ref(tab: Benin top five death rate), Top five death reasons for Benin from 2000 until now are: Malaria, Neonatal disorders, Lower respiratory infections, cardiovascular disease, Diarrheal diseases.
 Meanwhile, according to table \@ref(tab: Mozambique top five death rate) top five death reasons for Mozambique from 2000 unitl now are: HIV/AIDS, Malaria,Neonatal disorders, Cardiovascular diseases,Tuberculosis.
