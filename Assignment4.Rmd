@@ -361,7 +361,9 @@ In this part, I used package readr @readr to read data, package broom @broom to 
 
 ### Benin and Mozambique
 
-**Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?** **Q2: What is the development trend of these causes in the above question?**
+**Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?** 
+
+**Q2: What is the development trend of these causes in the above question?**
 
 
 **(1).Top 5 death causes in Benin and Mozambique**
