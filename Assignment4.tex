@@ -506,6 +506,81 @@ It is corresponding to common sense as well. Because both Cardiovascular Disease
 
 In this part, I used package readr \textcite{readr} to read data, package broom \textcite{broom} to get statistic data from model, package knitr \textcite{knitr} to make table, package tidyverse \textcite{tidyverse} for basic calculation and package ggplot2 \textcite{ggplot2} to plot.
 
+\clearpage
+
+\hypertarget{benin-and-mozambique}{%
+\subsubsection{Benin and Mozambique}\label{benin-and-mozambique}}
+
+\textbf{Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?}
+\textbf{Q2: What is the development trend of these causes in the above question?}
+
+\textbf{(1).Top 5 death causes in Benin and Mozambique}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \caption{(\#tab:Benin top five death rate)The top 5 death causes of Benin from 2000 until now}
+## \centering
+## \begin{tabular}[t]{l|r}
+## \hline
+## Death\_cause & Death\_amount\\
+## \hline
+## Malaria & 253392\\
+## \hline
+## Neonatal disorders & 232414\\
+## \hline
+## Lower respiratory infections & 183930\\
+## \hline
+## Cardiovascular diseases & 181463\\
+## \hline
+## Diarrheal diseases & 121827\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \caption{(\#tab:Mozambique top five death rate)The top 5 death causes of Mozambique from 2000 until now}
+## \centering
+## \begin{tabular}[t]{l|r}
+## \hline
+## Death\_cause & Death\_amount\\
+## \hline
+## HIV/AIDS & 1385012\\
+## \hline
+## Malaria & 513519\\
+## \hline
+## Neonatal disorders & 509414\\
+## \hline
+## Cardiovascular diseases & 502641\\
+## \hline
+## Tuberculosis & 415674\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+According to that table @ref(tab: Benin top five death rate), Top five death reasons for Benin from 2000 until now are: Malaria, Neonatal disorders, Lower respiratory infections, cardiovascular disease, Diarrheal diseases.
+Meanwhile, according to table @ref(tab: Mozambique top five death rate) top five death reasons for Mozambique from 2000 unitl now are: HIV/AIDS, Malaria,Neonatal disorders, Cardiovascular diseases,Tuberculosis.
+Comparing to other countries, Benin and Mozambique have totally different results. For those high-income or developed countries and middle-income countries, the main death causes are Cardiovascular disease, cancers, or diabetes mellitus, which are mainly caused by getting old, or unhealthy lifestyle. However, in Benin and Mozambique the main cause of death are different types and infectious diseases and neonatal disorders. The reason for this phenomena is the bad circumstance and the poor medical system in these countries, also they are lack of vaccines and medicines, according to \textcite{mbaye2019telling}. Many people could have been saved if they have a good treatment. For example, Malaria is mainly transmitted by mosquitoes, and in Africa there are so many mosquitoes. However people can be saved if they have specific drugs like artemisinin. In this way, Malaria, a not very severe disease in other countries, become the top death cause in Benin and Mozambique.
+
+\textbf{(2).Figure of the trends of these diseases in Benin and Mozambique}
+\includegraphics{Assignment4_files/figure-latex/topfiveplot-1.pdf}
+
+According to figure graph\ref{fig:topfiveplot}, except Diarrheal disease, all the other four diseases were increasing from 2000 until now.Lower respiratory infections death reached the peak around 2015, and began to decrease in recent years.
+For Mozambique, the death rate of Cardiovascular disease was increasing from 2000 until now. Death number for HIV and Tuberculosis reached the peak in around 2013 and began to drop.The death number of Malaria and Neonatal disorder was deceasing from 2000 until now.
+In order to help these low-income countries get out of these difficulties, and save more life, high-income developed countries should help them by serving more medicines and vaccines. Also, more medical teams should support Africa and help patients in those low-income countries.
+To make these tables and figure, I can also cite R packages as follows \textcite{tidyverse}, \textcite{ggplot2}, \textcite{readr}, \textcite{gridExtra}.
+
+\clearpage
+
+\hypertarget{conclusion}{%
+\subsection{Conclusion}\label{conclusion}}
+
+In conclusion, we can see that in high-income or developed countries like Australia, Switzerland, and Germany, the main death causes are cardiovascular diseases and they are caused by bad lifestyles and a long life time. People need to pay more attention to their mental health,and have a healthy diet. For those middle-income countries like China, India, and Mexico, the main death reason are cardiovascular and cancer, and the death reason is very related to the GDP of these countries. For those low-income countries, like Benin and Mozambique, people are suffering in many kinds of infectious diseases. We hope more high-income and developed countries can help those poor counties by severing more medical help, medicines and vaccines. All the countries in the world should collaborate with each other and make more people have happiness and healthy life.
+
 \printbibliography
 
 \end{document}
