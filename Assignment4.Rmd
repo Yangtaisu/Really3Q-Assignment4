@@ -53,7 +53,6 @@ library(ggplot2)
 library(readr)
 library(knitr)
 library(gridExtra)
-library(reshape2)
 ```
 #### Findings
 ```{r, eval=TRUE,echo=FALSE}
@@ -97,7 +96,7 @@ Different from other high-incoem countries with Cardiovascular diseases as the m
 
 ```{r topfiveplot,fig.cap = "figure of top5 death reason in Benin and Mozambique", eval=TRUE,echo=FALSE}
 disease_data_Benin_plot <- annual_number_of_deaths_by_cause %>% 
-  select(1,3,9,13,16,17,18,22) %>% 
+  select(1,3,9,16,17,18,22) %>% 
   filter(Country %in% c("Benin"),
          (Year >= 2000)) %>% 
   pivot_longer(cols =  -c(1:2), 
@@ -133,7 +132,13 @@ gridExtra::grid.arrange(P1,P2)
 
 
 #### Summary
-According to figure graph\@ref(fig:topfiveplot), except Diarrheal disease, all the other four disease is increasing from 2000 until now.Lower respiratory infections death reached the peak around 2015, and begin to decrease in recent years.
-For Mozambique, the death rate of Cardiovascular disease was increasing from 2000 unitl now. Death number for HIV and Tuberculosis reached the peak in around 2013 and begin to drop.The death number of Malaria and Neonatal disorder is deceasing from 2000 until now.
-In order to help these low-income countries get out of these difficulties, and save more life, high-income developed countries should help them by serving more medicine and vaccine. Also, more medical teams should support Africa and help patients in those low-income countries.
+According to that table \@ref(tab: Benin top five death rate), Top five death reasons for Benin from 2000 until now are: Malaria, Neonatal disorders, Lower respiratory infections, cardiovascular disease, Diarrheal diseases.
+Meanwhile, according to table \@ref(tab: Mozambique top five death rate) top five death reasons for Mozambique from 2000 unitl now are: HIV/AIDS, Malaria,Neonatal disorders, Cardiovascular diseases,Tuberculosis.
+Different from other high-income countries with Cardiovascular diseases as the main cause, these two low-income countries' death rate may caused by infectious disease and Neonatal disorders, due to the poor medical system and lack of vaccines and hospitals according to @mbaye2019telling.
+According to figure graph\@ref(fig:topfiveplot), except Diarrheal disease, all the other four diseases were increasing from 2000 until now.Lower respiratory infections death reached the peak around 2015, and began to decrease in recent years.
+For Mozambique, the death rate of Cardiovascular disease was increasing from 2000 until now. Death number for HIV and Tuberculosis reached the peak in around 2013 and began to drop.The death number of Malaria and Neonatal disorder was deceasing from 2000 until now.
+In order to help these low-income countries get out of these difficulties, and save more life, high-income developed countries should help them by serving more medicines and vaccines. Also, more medical teams should support Africa and help patients in those low-income countries.
 To make these tables and figure, I can also cite R packages as follows @tidyverse, @ggplot2, @gridExtra.
+
+## Conclusion
+In conclusion, we can see that in high-income or developed countries like Australia, Switzerland, and Germany, the main death causes are cardiovascular diseases and they are caused by bad lifestyles and a long life time. People need to pay more attention to their mental health,and have a healthy diet. For those middle-income countries like China, India, and Mexico, the main death reason are  cardiovascular and cancer, and the death reason is very related to the GDP of these countries. For those low-income countries, like Benin and Mozambique, people are suffering in many kinds of infectious diseases. We hope more high-income and developed countries can help those poor counties by severing more medical help, medicines and vaccines. All the countries in the world should collaborate with each other and make more people have happiness and healthy life. 
