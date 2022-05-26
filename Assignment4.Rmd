@@ -47,7 +47,7 @@ output:
 
 **Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?**
 **Q2: What is the development trend of these causes in the above question?**
-```{r,eval=TRUE,echo=FALSE}
+```{r setup,eval=TRUE,echo=FALSE,message=FALSE,warning=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(readr)
@@ -55,7 +55,7 @@ library(knitr)
 library(gridExtra)
 ```
 
-```{r, eval=TRUE,echo=FALSE}
+```{r readdata, eval=TRUE,echo=FALSE,message=FALSE,warning=FALSE}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
     col_types = cols(`Number of executions` = col_double()))
 ```
