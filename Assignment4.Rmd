@@ -52,6 +52,7 @@ library(readr)
 library(tidyverse)
 library(knitr)
 library(broom)
+library(ggplot2)
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
     col_types = cols(`Number of executions` = col_double()))
 GDP <- read_csv("Data/GDP.csv")
@@ -205,4 +206,4 @@ More than 90% of deaths caused by Cardiovascular diseases and Neoplasms can be e
 
 It is corresponding to common sense as well. Because both Cardiovascular Diseases and Neoplasms occur more in the area with higher income. The longer one lives, the higher the possibility one can get these 2 diseases. Richer a country is, more resources can be used on transmitted diseases. therefore we can observe that death caused by transmitted diseases decreased to a very low level
 
-In this part, I used package readr @readr to read data, package broom @broom to get statistic data from model, package knitr @knitr to make table and package tidyverse @tidyverse for basic calculation.
+In this part, I used package readr @readr to read data, package broom @broom to get statistic data from model, package knitr @knitr to make table, package tidyverse @tidyverse for basic calculation and package ggplot2 @ggplot2 to plot.
