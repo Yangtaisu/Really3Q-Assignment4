@@ -1,6 +1,6 @@
 ---
 title: 'Title'
-author: ""
+author: "Miao Sun"
 bibliography: references.bib
 biblio-style: authoryear-comp
 linestretch: 1.5
@@ -18,7 +18,10 @@ output:
     toc: false
 ---
 
-```{r}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      messages = FALSE, 
+                      warning = FALSE)
 library(readr)
 library(tidyverse)
 library(knitr)
@@ -83,6 +86,19 @@ CI_Total <- df_CI %>%
   left_join(GDP, by = c ("Country" = "Entity",
                          "Year" = "Year"))
 ```
+## Introduction:
+
+The health condition are different due to the resources different countries control. Which lead to an inequality in health in different areas @emadi2021global. Country in different developing condition would have different health conditions. This section will focus on 2 typical developing countries : China and India. Investigate the disease that cause the death in these 2 countries most and how they are related with the GDP per capita.
+
+
+## Research Question:
+
+
+### Q1: What are the diseases that growing fastest in developing country?
+
+
+### Q2: How the diseases changes with the change of GDP per capita?
+
 
 ```{r Percentage Change in China and India}
 Percentage_trend <- CI_Percent %>%
@@ -103,6 +119,7 @@ Absolute_trend <- CI_Total %>%
 ggplotly(Percentage_trend)
 ggplotly(Absolute_trend)
 ```
+
 
 ```{r Run regression with the number of deasease against GDP per capita.}
 CI_model <- CI_Total %>%
@@ -135,9 +152,17 @@ CI_model_fitness <- CI_model %>%
   unnest(glance) %>%
   select(Country, Death_cause, r.squared) %>%
   mutate(r.squared = round(r.squared, 2)) %>% 
-  right_join(CI_coef)
+  right_join(CI_coef) %>% 
+  mutate(intercept = round(intercept, 2),
+         slope = round(slope, 2))
 
 datatable(CI_model_fitness)
 ```
+In this graph, it is clear that both Cardiovascular diseases and Neoplasms contribute the most among other interested diseases in both China and India. additionally, Diabete are increasing as where. but slower than Cardiovascular diseases and Neoplasms so i will not discuses it. 
+
+Further more, When we combine them with the GDP per capita graph. There is a clear trend that the death caused by these 2 disease are highly correlated with the GDP growth. After running regression. we found that more than 90% of death caused by Cardiovascular diseases and Neoplasms can be explained by the model. In China, for every 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms are 182 and 90. In India, for every 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms are 221 and 85 respectively.
+
+This conclusion is corresponding to the common sense as well. because both Cardiovascular diseases and Neoplasms occurs more in area with higher income. Longer one lived, higher the possibility one can get these 2 diseases. Richer a country is, more resources can be used on transmitted disease like HIV and Malaria. therefore we can observed that death caused by transmitted diseases are decreasing to a very low level
 
 
+## References: 
