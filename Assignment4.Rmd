@@ -67,7 +67,9 @@ GDP <- read_csv("Data/GDP.csv")
 
 # Introduction
 
-Do you know around 56 million people die each year? What caused their death? How did the causes of death change over time and difference between countries and world regions? And can we prevent death early. There are the big questions we are answering in our presentation. Our data is from "data in our world", It counts more than 20 causes of death in countries around the world from 1990 to 2018. From the table\@ref(tab:deathcauses), here is a list of the causes of death covered by this report. From the plot\@ref(fig:worldplot), we can see Cardiovascular diseases are the leading cause of death globally. The second biggest cause is Neoplasms. What about the specific situation in the different countries? The four members of our group will choose two countries of interest and make an analysis.
+Do you know around 56 million people die each year? What caused their death? How did the causes of death change over time and difference between countries and world regions? And can we prevent death early. There are the big questions we are answering in our report. 
+
+Our data is from "data in our world", It counts more than 20 causes of death in countries around the world from 1990 to 2018. From the table\@ref(tab:deathcauses), here is a list of the causes of death covered by this report. From the plot\@ref(fig:worldplot), we can see Cardiovascular diseases are the leading cause of death globally. The second biggest cause is Neoplasms. What about the specific situation in the different countries? The four members of our group will choose two countries of interest and make an analysis.
 
 ```{r deathcauses,echo = FALSE,message=FALSE,warning=FALSE}
 world_data <-annual_number_of_deaths_by_cause %>% 
@@ -100,11 +102,13 @@ ggplot(world_data,
 
 ## Australia and Switzerland
 
+**Research Question:**
+
 **Q1: What can be observed in the chart of causes of death due to disease?**
 
 **Q2: What can be observed in the chart of causes of death due to others?**
 
-**(1).Plot death due to disease factors**
+**1.Plot death due to disease factors**
 
 ```{r,echo = FALSE,message=FALSE,warning=FALSE}
 disease_data <- annual_number_of_deaths_by_cause %>% 
@@ -143,18 +147,28 @@ As we can see from this graph\@ref(fig:diseaseplot), cardiovascular disease and 
 This result confused me. I would have thought that because of the advancement of medicine, the causes of death from disease should gradually decrease.So I looked up these three conditions online, all of which are highly prevalent in older people, and then in this table \@ref(tab:lifeexpendcy), I listed life expectancy in Australia and Switzerland from 1990 to 2019.As can be seen from the table\@ref(tab:lifeexpendcy), life expectancy increases as the years go by, meaning that more people are living old enough so that the number of people who are sick increases.
 
 ```{r lifeexpendcy,echo = FALSE,message=FALSE,warning=FALSE}
-AZ_life_expectancy <- life_expectancy %>% filter(
-  Entity %in% c("Australia","Switzerland"),
+A_life_expectancy <- life_expectancy %>% filter(
+  Entity %in% c("Australia"),
   Year %in% c(1990:2018)
 ) %>% 
   rename("Country" = "Entity",
          "Life_expectancy" = "Life expectancy") %>% 
   select(-Code)
 
-AZ_life_expectancy %>% 
-  head(10) %>% 
-  kable(caption = "Life Expectancy in Australia and Switzerland")
+S_life_expectancy <- life_expectancy %>% filter(
+  Entity %in% c("Switzerland"),
+  Year %in% c(1990:2018)
+) %>% 
+  rename("Country" = "Entity",
+         "Life_expectancy" = "Life expectancy") %>% 
+  select(-Code)
 
+AZlife_expectancy <- A_life_expectancy %>% 
+  cbind(S_life_expectancy)
+
+AZlife_expectancy %>% 
+  tail(10) %>% 
+  kable(caption = "Life Expectancy in Australia and Switzerland")
 ```
 
 In plot\@ref(fig:diseaseplot1), I have added this life expectancy line to the first graph for better visualization and you can see that it is all on an up trend.
@@ -183,7 +197,7 @@ ggplot(DL_data,
 
 ```
 
-**(2).Plot death due to other factors**
+**2.Plot death due to other factors**
 
 ```{r otherplot, fig.cap ="Number of deaths by other causes in Australia and Switzerland.",echo = FALSE,message=FALSE,warning=FALSE}
 other_data <- annual_number_of_deaths_by_cause %>% 
@@ -358,6 +372,8 @@ In this part, I used package readr @readr to read data, package broom @broom to 
 
 ## Mexico and Germany
 
+**Research Question:**
+
 **Q1: In Mexico and Germany what are the top five diseases that cause the most deaths from 2005?**
 
 **Q2: What are the trends of these countries over the 15 years?**
@@ -368,7 +384,7 @@ annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-ca
 
 ```
 
-**(1).The tables of top five diseases in Mexico and Germany**
+**1.The tables of top five diseases in Mexico and Germany**
 
 ```{r Mexicotable,echo = FALSE,message = FALSE,warning = FALSE}
 Mexico <- annual_number_of_deaths_by_cause %>%
@@ -405,7 +421,7 @@ kable(caption = "Deaths by cause of Germany")
 
 On the other hand, from the table \@ref(tab:Germanytable) it is easy to see it’s similar to Mexico, where the top three are Cardiovascular diseases, Neoplasms and Digestive diseases. But the number of Cardiovascular deaths in Germany is almost five million (4991605) which is more than twice as high as in Mexico. Alzheimer’s diseases and other dementias is the fourth, followed by the Chronic respiratory diseases.
 
-**(2).The figure of trend of these diseases in Mexico and Germany**
+**2.The figure of trend of these diseases in Mexico and Germany**
 ```{r ,echo = FALSE,message = FALSE,warning = FALSE}
 Mexico_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
@@ -460,11 +476,13 @@ To this data set, I selected the data of Mexico and Germany from 2005 to do a re
 
 ## Benin and Mozambique
 
+**Research Question:**
+
 **Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?** 
 
 **Q2: What is the development trend of these causes in the above question?**
 
-**(1).Top 5 death causes in Benin and Mozambique**
+**1.Top 5 death causes in Benin and Mozambique**
 
 ```{r Benintopfivedeathrate, eval=TRUE,echo=FALSE}
 disease_data_Benin <- annual_number_of_deaths_by_cause %>% 
@@ -504,7 +522,7 @@ disease_data_Mozambique %>%
 
 According to that table \@ref(tab:Benintopfivedeathrate), Top five death reasons for Benin from 2000 until now are: Malaria, Neonatal disorders, Lower respiratory infections, cardiovascular disease, Diarrheal diseases. Meanwhile, according to table \@ref(tab:Mozambiquetopfivedeathrate) top five death reasons for Mozambique from 2000 until now are: HIV/AIDS, Malaria,Neonatal disorders, Cardiovascular diseases,Tuberculosis. Comparing to other countries, Benin and Mozambique have totally different results. For those high-income or developed countries and middle-income countries, the main death causes are Cardiovascular disease, cancers, or diabetes mellitus, which are mainly caused by getting old, or unhealthy lifestyle. However, in Benin and Mozambique the main cause of death are different types and infectious diseases and neonatal disorders. The reason for this phenomena is the bad circumstance and the poor medical system in these countries, also they are lack of vaccines and medicines, according to @mbaye2019telling. Many people could have been saved if they have a good treatment. For example, Malaria is mainly transmitted by mosquitoes, and in Africa there are so many mosquitoes. However people can be saved if they have specific drugs like artemisinin. In this way, Malaria, a not very severe disease in other countries, become the top death cause in Benin and Mozambique.
 
-**(2).Figure of the trends of these diseases in Benin and Mozambique**
+**2.Figure of the trends of these diseases in Benin and Mozambique**
 
 ```{r topfiveplot, fig.cap = "figure of top5 death reason in Benin and Mozambique", eval=TRUE,echo=FALSE}
 disease_data_Benin_plot <- annual_number_of_deaths_by_cause %>% 
