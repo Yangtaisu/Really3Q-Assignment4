@@ -1,5 +1,5 @@
 ---
-title: "The Causes of Death in the World"
+title: "The Causes of Death around the World"
 author:
 - familyname: Shi
   othernames: Jingyi
@@ -43,11 +43,15 @@ output:
     toc: false
 ---
 
-```{r,echo = FALSE,message=FALSE,warning=FALSE}
+```{r setup, echo = FALSE,message=FALSE,warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      messages = FALSE, 
+                      warning = FALSE)
 library(tidyverse)
 library(ggplot2)
 library(readr)
 library(knitr)
+library(broom)
 ```
 
 ```{r read_data, results='hide',echo = FALSE,message=FALSE,warning=FALSE}
@@ -55,6 +59,7 @@ annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-ca
     col_types = cols(`Number of executions` = col_double()))
 life_expectancy <- read_csv("Data/life-expectancy.csv")
 share_with_depression <- read_csv("Data/share-with-depression.csv")
+GDP <- read_csv("Data/GDP.csv")
 ```
 
 \clearpage
@@ -203,3 +208,146 @@ For other causes. This graph \@ref(fig:otherplot)shows that self-harm, road inju
 
 In order to read data used R package @readr, clean the data used R package @tidyverse, plotting picture used R package @ggplot2.
 
+\clearpage
+
+# China and India
+
+```{r}
+df_global <-  annual_number_of_deaths_by_cause %>%
+  filter(Year %in% c(1950:2018)) %>%
+  pivot_longer(
+    cols =  -c(Country, Code, Year),
+    names_to = "Death_cause",
+    values_to = "Count"
+  )
+
+df_CI <- df_global %>%
+  filter(Country %in% c("China", "India"))
+
+interest <- c(
+  "Cardiovascular diseases",
+  "Diabetes mellitus",
+  "HIV/AIDS",
+  "Neoplasms",
+  "Nutritional deficiencies",
+  "Malaria"
+)
+```
+
+```{r ,messages = FALSE, warning = FALSE}
+CI_Percent <- df_CI %>%
+  group_by(Country,
+           Year) %>%
+  mutate(Total_death = sum(Count, na.rm = TRUE) * 100) %>%
+  group_by(Country,
+           Year,
+           Death_cause,
+           Total_death) %>%
+  summarize(Percentage = Count / Total_death * 100, .groups = 'drop') %>%
+  group_by(Country,
+           Death_cause) %>%
+  arrange(desc(Percentage)) %>%
+  filter(Death_cause %in% interest)
+
+CI_Total <- df_CI %>%
+  group_by(Country,
+           Year,
+           Death_cause) %>%
+  mutate(Death_abs = sum(Count, na.rm = TRUE)) %>%
+  filter(Death_cause %in% interest) %>%
+  group_by(Year,
+           Country,
+           Death_cause,
+           Death_abs) %>%
+  summarise(.groups = 'drop') %>%
+  left_join(GDP, by = c ("Country" = "Entity",
+                         "Year" = "Year"))
+```
+
+The health conditions are different due to the resources that different countries control. Which leads to an inequality in health in different areas @emadi2021global. Countries in different developing conditions would have different health conditions. This section will focus on 2 typical developing countries : China and India. Investigate diseases that cause the most death in China and India, and how they are related with the GDP per capita.
+
+## Research Question:
+
+**Q1: What are the diseases that cause the most death in China and India?**
+
+**Q2: How the death caused by those diseases change with the change of GDP per capita?**
+
+We will focusing on 6 typical diseases: they are : Cardiovascular Diseases, Diabetes mellitus, HIV, Neoplasms, Nutritional deficiencies and, Malaria
+
+```{r plot}
+Percentage_trend <- CI_Percent %>%
+  ggplot(aes(x = Year,
+             y = Percentage,
+             color = Death_cause)) +
+  geom_line() +
+  facet_wrap( ~ Country, nrow = 2, scales = "free_y")
+
+Absolute_trend <- CI_Total %>%
+  ggplot(aes(x = Year)) +
+  geom_line(aes(y = Death_abs,
+                color = Death_cause)) +
+  geom_line(aes(y = gdppc * 500)) +
+  facet_wrap( ~ Country, nrow = 2, scales = "free_y")
+
+
+```
+
+```{r percendeath, fig.cap = "Percentage of different causes of death by year"}
+Percentage_trend
+```
+
+In this graph \@ref(fig:percendeath) , it is clear that both Cardiovascular Diseases and Neoplasms contribute the most among other diseases we are interested in both China and India and the trend is still increasing. So we will mainly focus on these 2 diseases. There are 43% deaths caused by Cardiovascular diseases and 26% caused by Neoplasms in China. 29% deaths caused by Cardiovascular diseases and 10% caused by Neoplasms in India. So, diseases that cause the most deaths in China and India are Cardiovascular diseases and Neoplasms.
+
+```{r totaldeath, fig.cap = "Total number of death by year and GDP per capita"}
+Absolute_trend
+```
+
+In this graph \@ref(fig:totaldeath), we combine them with the GDP per capita graph, which is the black line. There is a clear trend that the death caused by these 2 diseases are highly correlated with GDP per capita. To find out the relations between them.
+
+```{r Run regression with the number of deasease against GDP per capita.}
+CI_model <- CI_Total %>%
+  filter(Death_cause %in% c("Cardiovascular diseases", "Neoplasms")) %>%
+  group_by(Country,
+           Death_cause) %>%
+  nest() %>%
+  mutate(model = map(
+    .x = data,
+    .f = function(x) {
+      lm(Death_abs ~ gdppc,
+         data = x)
+    }
+  ))
+
+CI_coef <- CI_model %>%
+  mutate (tidy = map(model, tidy)) %>%
+  unnest(tidy) %>%
+  select(Country, Death_cause, term, estimate) %>%
+  pivot_wider(
+    id_cols = c("Country", "Death_cause"),
+    names_from = term,
+    values_from = estimate
+  ) %>%
+  rename("intercept" = "(Intercept)",
+         "slope" = "gdppc")
+
+CI_model_fitness <- CI_model %>%
+  mutate(glance = map(model, glance)) %>%
+  unnest(glance) %>%
+  select(Country, Death_cause, r.squared) %>%
+  mutate(r.squared = round(r.squared, 2)) %>% 
+  right_join(CI_coef, by = c("Country", "Death_cause")) %>% 
+  mutate(intercept = round(intercept, 2),
+         slope = round(slope, 2))
+```
+
+```{r modelparameter}
+CI_model_fitness %>% kable(caption = "Parameters of model")
+```
+
+I run a regression, using the death caused by "Cardiovascular diseases" and "Neoplasms" against GDP per capita showan in the table \@ref(tab:modelparameter). The r\^2 is quite high means they fitted into the linear model quite well
+
+More than 90% of deaths caused by Cardiovascular diseases and Neoplasms can be explained by the model. In China, for every 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms will increase for 182 and 90. In India, for 1 unit increase in the GDP per capita, the deaths caused by Cardiovascular diseases and Neoplasms increased by 221 and 85 respectively.
+
+It is corresponding to common sense as well. Because both Cardiovascular Diseases and Neoplasms occur more in the area with higher income. The longer one lives, the higher the possibility one can get these 2 diseases. Richer a country is, more resources can be used on transmitted diseases. therefore we can observe that death caused by transmitted diseases decreased to a very low level
+
+In this part, I used package readr @readr to read data, package broom @broom to get statistic data from model, package knitr @knitr to make table, package tidyverse @tidyverse for basic calculation and package ggplot2 @ggplot2 to plot.
