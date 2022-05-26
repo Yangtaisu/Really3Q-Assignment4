@@ -1,5 +1,5 @@
 ---
-title: " select"
+title: "The causes of death around the world"
 author:
 - familyname: Shi
   othernames: Jingyi
@@ -39,11 +39,17 @@ output:
     includes:
       in_header: preamble.tex
     keep_tex: yes
+    number_sections: yes
     citation_package: biblatex
     toc: false
 ---
+\clearpage
+### Mexico and Germany
 
-```{r}
+**Q1: In Mexico and Germany what are the top five diseases that cause the most deaths from 2005?**
+**Q2: What are the trends of these countries over the 15 years?**
+
+```{r,echo = FALSE,message = FALSE,warning = FALSE}
 library(tidyverse)
 library(ggplot2)
 library(readr)
@@ -52,19 +58,17 @@ library(plotly)
 library(gridExtra)
 ```
 
-## Introduction
 
-## Main body
 
-### Mexico and Germany
-
-```{r  results='hide'}
+```{r  results='hide',echo = FALSE,message = FALSE,warning = FALSE}
 annual_number_of_deaths_by_cause <- read_csv("Data/annual-number-of-deaths-by-cause.csv", 
     col_types = cols(`Number of executions` = col_double())) 
 
 ```
 
-```{r Mexico}
+**(1).The tables of top five diseases in Mexico and Germany**
+
+```{r Mexicotable,echo = FALSE,message = FALSE,warning = FALSE}
 Mexico <- annual_number_of_deaths_by_cause %>%
   filter(Country == "Mexico") %>%
   filter(!is.na(Code), Year >= 2005) %>%
@@ -80,7 +84,9 @@ kable(caption = "Deaths by cause of Mexico")
   
 ```
 
-```{r Germany}
+From the table of top 5 causes of death in Mexico since 2005\@ref(tab:Mexicotable) we can see that there are most people die from cardiovascular diseases with almost two million (1977765) deaths. The second is Neoplasms. Digestive diseases, Chronic kidney disease and Diabetes mellitus are the third, fourth and fifth respectively.
+
+```{r Germanytable,echo = FALSE,message = FALSE,warning = FALSE}
 Germany <- annual_number_of_deaths_by_cause %>%
   filter(Country == "Germany") %>%
   filter(!is.na(Code), Year >= 2005) %>%
@@ -95,7 +101,10 @@ head(n=5) %>%
 kable(caption = "Deaths by cause of Germany")
 ```
 
-```{r MexicoAndGermanyfigure,fig.cap = "Deaths by cause in Mexico and Germany"}
+On the other hand, from the table in Germany\@ref(tab:Germanytable) it is easy to see it’s similar to Mexico, where the top three are Cardiovascular diseases, Neoplasms and Digestive diseases. But the number of Cardiovascular deaths in Germany is almost five million (4991605) which is more than twice as high as in Mexico. Alzheimer’s diseases and other dementias is the fourth, followed by the Chronic respiratory diseases.
+
+**(2).The figure of trend of these diseases in Mexico and Germany**
+```{r MexicoAndGermanyfigure,fig.cap = "Deaths by cause in Mexico and Germany",echo = FALSE,message = FALSE,warning = FALSE}
 Mexico_cause <- annual_number_of_deaths_by_cause %>% 
     select(-2, -4) %>% 
   filter(Country == "Mexico",
@@ -134,3 +143,8 @@ Germany_plot <- Germany_cause %>%
 gridExtra::grid.arrange(Mexico_plot,Germany_plot, nrow = 2)
 ```
 
+The graph of the trend of these diseases in Mexico\@ref(fig:MexicoAndGermanyfigure) shows that the number of deaths from these five diseases is increasing every year, with the biggest increase in deaths from cardiovascular diseases. The number of deaths from Chronic kidney disease, Diabetes mellitus and Digestive diseases is similar every year. By contrast, the trend of above diseases in Germany has seen a relatively flat. Except for the significant increase in the number of deaths due to cardiovascular diseases since 2011, the other four causes of death showed a relatively stable trend.
+
+### Summary 
+
+To this dataset, I selected the data of Mexico and Germany from 2005 to do a research. My conclusion is as I said, cardiovascular disease, Neoplasms and digestive disease are the top three causes of death in Mexico and Germany. The article written by @miller1997exercise said most of these diseases are caused by bad living habits. We should pay attention to this problem and call on all of us to change the bad lifestyle, keep exercising and have a regular diet. In this report, I used R package @tidyverse, @ggplot2 and @readr.
