@@ -42,7 +42,7 @@ output:
     citation_package: biblatex
     toc: false
 ---
-
+\clearpage
 ### Benin and Mozambique
 
 **Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?**
@@ -139,6 +139,8 @@ According to figure graph\@ref(fig:topfiveplot), except Diarrheal disease, all t
 For Mozambique, the death rate of Cardiovascular disease was increasing from 2000 until now. Death number for HIV and Tuberculosis reached the peak in around 2013 and began to drop.The death number of Malaria and Neonatal disorder was deceasing from 2000 until now.
 In order to help these low-income countries get out of these difficulties, and save more life, high-income developed countries should help them by serving more medicines and vaccines. Also, more medical teams should support Africa and help patients in those low-income countries.
 To make these tables and figure, I can also cite R packages as follows @tidyverse, @ggplot2, @readr, @gridExtra.
+
+\clearpage
 
 ## Conclusion
 In conclusion, we can see that in high-income or developed countries like Australia, Switzerland, and Germany, the main death causes are cardiovascular diseases and they are caused by bad lifestyles and a long life time. People need to pay more attention to their mental health,and have a healthy diet. For those middle-income countries like China, India, and Mexico, the main death reason are  cardiovascular and cancer, and the death reason is very related to the GDP of these countries. For those low-income countries, like Benin and Mozambique, people are suffering in many kinds of infectious diseases. We hope more high-income and developed countries can help those poor counties by severing more medical help, medicines and vaccines. All the countries in the world should collaborate with each other and make more people have happiness and healthy life. 
