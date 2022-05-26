@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 Country,Code,Year,Number of executions,Meningitis,Alzheimer's disease and other dementias,Parkinson's disease,Nutritional deficiencies,Malaria,Drowning,Interpersonal violence,Maternal disorders,HIV/AIDS,Drug use disorders,Tuberculosis,Cardiovascular diseases,Lower respiratory infections,Neonatal disorders,Alcohol use disorders,Self-harm,Exposure to forces of nature,Diarrheal diseases,Environmental heat and cold exposure,Neoplasms,Conflict and terrorism,Diabetes mellitus,Chronic kidney disease,Poisonings,Protein-energy malnutrition,Terrorism (deaths),Road injuries,Chronic respiratory diseases,Cirrhosis and other chronic liver diseases,Digestive diseases,"Fire, heat, and hot substances",Acute hepatitis
-=======
-Country,Code,Year,Amnesty International,Meningitis,Alzheimer's disease and other dementias,Parkinson's disease,Nutritional deficiencies,Malaria,Drowning,Interpersonal violence,Maternal disorders,HIV/AIDS,Drug use disorders,Tuberculosis,Cardiovascular diseases,Lower respiratory infections,Neonatal disorders,Alcohol use disorders,Self-harm,Exposure to forces of nature,Diarrheal diseases,Environmental heat and cold exposure,Neoplasms,Conflict and terrorism,Diabetes mellitus,Chronic kidney disease,Poisonings,Protein-energy malnutrition,Terrorism (deaths),Road injuries,Chronic respiratory diseases,Cirrhosis and other chronic liver diseases,Digestive diseases,"Fire, heat, and hot substances",Acute hepatitis
->>>>>>> e280f9dc84832c24d6319355b0b983bd17df3464
 Afghanistan,AFG,2007,15,2933,1402,450,2488,393,2127,3657,4990,148,252,4995,53962,27672,23890,111,1310,296,9320,57,15925,8220,3189,4490,513,2439,1199,7425,7222,3346,6458,481,3437
 Afghanistan,AFG,2008,17,2731,1424,455,2277,255,1973,3785,5020,157,261,4790,54051,25800,23792,114,1330,1317,8275,57,16148,6895,3261,4534,495,2231,1092,7355,7143,3316,6408,462,3005
 Afghanistan,AFG,2009,0,2460,1449,460,2040,239,1852,3874,5013,167,270,4579,53964,24340,23672,115,1342,101,7359,57,16383,7617,3336,4597,483,1998,1065,7290,7045,3291,6358,448,2663
@@ -7276,3 +7272,4 @@ Zimbabwe,ZWE,2016,,1457,767,219,3056,2050,801,1342,1338,27141,110,10998,16937,13
 Zimbabwe,ZWE,2017,,1460,781,223,2990,2116,818,1363,1312,24846,115,10762,17187,12961,8901,50,2338,251,4948,37,11744,5,3313,2196,398,2962,0,2473,2818,2007,4342,654,144
 Zimbabwe,ZWE,2018,,1450,795,227,2918,2088,825,1396,1294,22106,121,10545,17460,12860,8697,51,2372,0,4745,37,12038,9,3381,2240,400,2890,,2509,2849,2030,4377,657,139
 Zimbabwe,ZWE,2019,,1450,812,232,2884,2068,827,1434,1294,20722,127,10465,17810,12897,8609,53,2403,660,4635,37,12353,11,3460,2292,405,2855,,2554,2891,2065,4437,662,136
+
