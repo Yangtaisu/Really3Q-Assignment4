@@ -66,7 +66,7 @@ GDP <- read_csv("Data/GDP.csv")
 
 \clearpage
 
-## Introduction
+# Introduction
 
 Do you know around 56 million people die each year? What caused their death? How did the causes of death change over time and difference between countries and world regions? And can we prevent death early. There are the big questions we are answering in our presentation. Our data is from "data in our world"', It counts more than 20 causes of death in countries around the world from 1990 to 2018. For this table\@ref(tab:deathcauses), here is a list of the causes of death covered by this report. From this plot\@ref(fig:worldplot), we can see Cardiovascular diseases are the leading cause of death globally. The second biggest cause is Neoplasms. What about the specific situation in the different countries? The four members of our group will choose two countries of interest and make an analysis.
 
@@ -97,9 +97,9 @@ ggplot(world_data,
 
 \clearpage
 
-## Main body
+# Main body
 
-### Australia and Switzerland
+## Australia and Switzerland
 
 **Q1: What can be observed in the chart of causes of death due to disease?**
 
@@ -153,7 +153,7 @@ AZ_life_expectancy <- life_expectancy %>% filter(
   select(-Code)
 
 AZ_life_expectancy %>% 
-  head() %>% 
+  head(10) %>% 
   kable(caption = "Life Expectancy in Australia and Switzerland")
 ```
 
@@ -212,7 +212,7 @@ In order to read data used R package @readr, clean the data used R package @tidy
 
 \clearpage
 
-# China and India
+## China and India
 
 ```{r}
 df_global <-  annual_number_of_deaths_by_cause %>%
@@ -240,7 +240,7 @@ interest <- c(
 CI_Percent <- df_CI %>%
   group_by(Country,
            Year) %>%
-  mutate(Total_death = sum(Count, na.rm = TRUE) * 100) %>%
+  mutate(Total_death = sum(Count, na.rm = TRUE)) %>%
   group_by(Country,
            Year,
            Death_cause,
@@ -268,7 +268,7 @@ CI_Total <- df_CI %>%
 
 The health conditions are different due to the resources that different countries control. Which leads to an inequality in health in different areas @emadi2021global. Countries in different developing conditions would have different health conditions. This section will focus on 2 typical developing countries : China and India. Investigate diseases that cause the most death in China and India, and how they are related with the GDP per capita.
 
-## Research Question:
+**Research Question:**
 
 **Q1: What are the diseases that cause the most death in China and India?**
 
@@ -356,7 +356,7 @@ In this part, I used package readr @readr to read data, package broom @broom to 
 
 \clearpage
 
-### Mexico and Germany
+## Mexico and Germany
 
 **Q1: In Mexico and Germany what are the top five diseases that cause the most deaths from 2005?**
 
@@ -447,13 +447,13 @@ gridExtra::grid.arrange(Mexico_plot,Germany_plot, nrow = 2)
 
 The graph of the trend of these diseases in Mexico\@ref(fig:MexicoAndGermanyfigure) shows that the number of deaths from these five diseases is increasing every year, with the biggest increase in deaths from cardiovascular diseases. The number of deaths from Chronic kidney disease, Diabetes mellitus and Digestive diseases is similar every year. By contrast, the trend of above diseases in Germany has seen a relatively flat. Except for the significant increase in the number of deaths due to cardiovascular diseases since 2011, the other four causes of death showed a relatively stable trend.
 
-### Summary 
+**Summary** 
 
 To this dataset, I selected the data of Mexico and Germany from 2005 to do a research. My conclusion is as I said, cardiovascular disease, Neoplasms and digestive disease are the top three causes of death in Mexico and Germany. The article written by @miller1997exercise said most of these diseases are caused by bad living habits. We should pay attention to this problem and call on all of us to change the bad lifestyle, keep exercising and have a regular diet. In this report, I used R package @tidyverse, @ggplot2 and @readr.
 
 \clearpage
 
-### Benin and Mozambique
+## Benin and Mozambique
 
 **Q1: What are top 5 causes of death in Benin and Mozambique, and what may be the reason for it?** 
 
@@ -541,9 +541,9 @@ According to figure graph\@ref(fig:topfiveplot), except Diarrheal disease, all t
 
 \clearpage
 
-## Conclusion
+# Conclusion
 
 In conclusion, we can see that in high-income or developed countries like Australia, Switzerland, and Germany, the main death causes are cardiovascular diseases and they are caused by bad lifestyles and a long life time. People need to pay more attention to their mental health,and have a healthy diet. For those middle-income countries like China, India, and Mexico, the main death reason are cardiovascular and cancer, and the death reason is very related to the GDP of these countries. For those low-income countries, like Benin and Mozambique, people are suffering in many kinds of infectious diseases. We hope more high-income and developed countries can help those poor counties by severing more medical help, medicines and vaccines. All the countries in the world should collaborate with each other and make more people have happiness and healthy life.
-=======
+
 
 
